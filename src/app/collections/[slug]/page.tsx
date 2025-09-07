@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { COLLECTIONS, getCollectionBySlug, TECHS } from "@/lib/data";
@@ -37,7 +38,7 @@ export default function CollectionPage({ params }: Props) {
               <CardTitle className="flex items-center justify-between gap-3">
                 <Link href={`/tech/${t.slug}`} className="hover:underline flex items-center gap-2">
                   {t.logoUrl ? (
-                    <img src={t.logoUrl} alt={`${t.name} logo`} width={18} height={18} />
+                    <Image src={t.logoUrl} alt={`${t.name} logo`} width={18} height={18} />
                   ) : null}
                   {t.name}
                 </Link>

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TECHS, COMPANIES } from "@/lib/data";
+import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KR_BLOGS, KR_JOBS, KR_NEWS } from "@/lib/insights-data";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -64,7 +65,7 @@ export default function InsightsPage() {
     if (selectedTechs.length > 0) params.set("techstacks", selectedTechs.join(",")); else params.delete("techstacks");
     params.set("tab", tab);
     router.replace(`${pathname}?${params.toString()}`);
-  }, [query, techCategory, selectedTechs, tab]);
+  }, [query, techCategory, selectedTechs, tab, pathname, router, sp]);
 
   const toggleTech = (slug: string) => {
     setSelectedTechs((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]));
@@ -107,7 +108,7 @@ export default function InsightsPage() {
         <div className="flex flex-wrap gap-2">
           {techChips.map((t) => (
             <button key={t.slug} onClick={() => toggleTech(t.slug)} className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm ${selectedTechs.includes(t.slug) ? "bg-primary text-white border-primary" : "bg-white/60"}`}>
-              {t.logoUrl ? <img src={t.logoUrl} alt="logo" width={16} height={16} /> : null}
+              {t.logoUrl ? <Image src={t.logoUrl} alt="logo" width={16} height={16} /> : null}
               {t.name}
             </button>
           ))}
@@ -148,7 +149,7 @@ export default function InsightsPage() {
                         const t = TECHS.find((x) => x.slug === s);
                         return (
                           <span key={s} className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs">
-                            {t?.logoUrl ? <img src={t.logoUrl} alt="logo" width={14} height={14} /> : null}
+                            {t?.logoUrl ? <Image src={t.logoUrl} alt="logo" width={14} height={14} /> : null}
                             {t?.name ?? s}
                           </span>
                         );
@@ -165,7 +166,7 @@ export default function InsightsPage() {
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {companiesByFilter.map((c) => (
               <Card key={c.name}>
-                <CardHeader><CardTitle className="text-base flex items-center gap-2">{c.logoUrl ? <img src={c.logoUrl} alt="logo" width={18} height={18} /> : null}{c.name}</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-base flex items-center gap-2">{c.logoUrl ? <Image src={c.logoUrl} alt="logo" width={18} height={18} /> : null}{c.name}</CardTitle></CardHeader>
                 <CardContent className="space-y-2">
                   <div className="text-xs text-muted-foreground">{c.region ?? "대한민국"} · {c.category}</div>
                   <div className="flex flex-wrap gap-2">
@@ -218,7 +219,7 @@ export default function InsightsPage() {
           <CardContent className="grid grid-cols-1 gap-3">
             {COMPANIES.map((c) => (
               <div key={c.name} className="rounded-md border p-3 flex items-center gap-3">
-                {c.logoUrl ? <img src={c.logoUrl} alt="logo" width={20} height={20} /> : null}
+                {c.logoUrl ? <Image src={c.logoUrl} alt="logo" width={20} height={20} /> : null}
                 <div className="flex-1">
                   <p className="text-sm font-medium">{c.name}</p>
                   <p className="text-xs text-muted-foreground">{c.techSlugs.join(" • ")}</p>

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     // const res = await firecrawl.crawl({ urls: body.urls, country: 'KR' })
     // return NextResponse.json(res)
     return NextResponse.json({ ok: true, received: body });
-  } catch (e: any) {
+  } catch (e) {
     const message = (e as Error)?.message ?? "unknown";
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }

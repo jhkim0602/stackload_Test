@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { TECHS } from "@/lib/data";
+import Image from "next/image";
 
 type C = { slug: string; name: string; category: string; region?: string; logoUrl?: string; techSlugs: string[]; sourceName?: string };
 
@@ -42,7 +43,7 @@ export default function CompaniesPage() {
           <Card key={c.name}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                {c.logoUrl ? <img src={c.logoUrl} alt={`${c.name} logo`} width={20} height={20} /> : null}
+                {c.logoUrl ? <Image src={c.logoUrl} alt={`${c.name} logo`} width={20} height={20} /> : null}
                 {c.name}
               </CardTitle>
             </CardHeader>
