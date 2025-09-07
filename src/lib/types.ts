@@ -17,9 +17,11 @@ export type Tech = {
   tags: string[];
   homepage?: string;
   repo?: string;
+  docs?: string;
   license?: string;
   version?: string;
   logoUrl?: string;
+  resources?: { title: string; url: string }[];
 };
 
 export type Collection = {

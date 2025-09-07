@@ -1,31 +1,42 @@
-stackload – 개발자 기술스택 가이드 플랫폼 (MVP)
+stackload – 개발자 기술스택 가이드 플랫폼
 
-개발자가 기술을 탐색/비교/학습할 수 있는 UI 시뮬레이터입니다.
-
-명령어
+실행
 
 ```bash
 npm run dev
 ```
 
-구성
+데이터 구조(유지보수 가이드)
 
-- 홈: 소개/Hero, 컬렉션 바로가기
-- 검색: Fuse.js 기반 클라이언트 검색 + 카테고리 필터
-- 기술 상세: 기본 정보/태그/가이드 섹션
-- 비교: 2개 기술 요약/메타/기능 테이블
-- 컬렉션: 분야별 기술 묶음
-- 회사: 예시 회사별 스택 카드
-- 가이드: 가이드 목록 페이지
+- public/data/techs.json: 대량 임포트 소스. 각 항목 필드
+  - slug, name, category, description, tags[], homepage, docs, logoUrl, resources[]
+  - 운영 중 API 응답 시 sourceName: "public/data/techs.json" 자동 부여
+- src/lib/data.ts: 핵심 카탈로그(핸드메이드). 정밀 보정/상위 노출 항목
+- src/lib/insights-data.ts: 국내 블로그/채용/뉴스 링크(확장 가능)
 
-디자인 시스템
+어디에 표시되나
 
-- Tailwind v4, shadcn/ui
-- next-themes 다크모드, sonner 토스트
-- 반응형 그리드, a11y 고려(키보드 포커스, ARIA 레이블)
+- 검색(/search): techs.json + data.ts 병합 로딩. 카드에 sourceName가 표시됨
+- 기술 상세(/tech/[slug]): 공식 홈페이지/문서/레포/리소스 링크 표시
+- 인사이트(/insights): 국내 블로그/채용/뉴스 링크 카드
 
-QA 체크리스트(발췌)
+데이터 업데이트 방법
 
-- 키보드로 헤더 메뉴/검색 이동 가능
-- 다크/라이트 전환 시 컬러 콘트라스트 유지
-- 좁은 화면에서 카드 1열, 넓은 화면에서 2–3열
+1) 일괄 추가: public/data/techs.json에 항목 추가 → 저장 → 새로고침
+2) 정밀 보정: src/lib/data.ts의 TECHS 배열에 상세 메타/리소스 보완
+3) 인사이트 출처: src/lib/insights-data.ts에 KR_BLOGS/KR_JOBS/KR_NEWS 추가
+
+수집(옵션)
+
+- API: POST /api/firecrawl { urls: string[] } → (연동 시) 수집/정제 후 techs.json 병합
+- 크론: 외부 스케줄러에서 위 API 호출 or 저장소에 JSON PR
+
+디자인/UX
+
+- 컬러: 블루-바이올렛, 글라스 카드, InView 모션
+- 랜딩: Hero 자동완성 검색, Steps, Ticker, Trending/Top/New 탭
+
+주의
+
+- 다크모드 없음(전면 제거)
+- 비교 섹션 제거됨 → 인사이트로 대체

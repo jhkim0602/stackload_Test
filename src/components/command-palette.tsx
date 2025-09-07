@@ -28,7 +28,7 @@ export function CommandPalette() {
           {[
             { label: "홈", href: "/" },
             { label: "검색", href: "/search" },
-            { label: "비교", href: "/compare" },
+            { label: "인사이트", href: "/insights" },
             { label: "컬렉션", href: "/collections" },
             { label: "회사", href: "/companies" },
             { label: "가이드", href: "/guides" },

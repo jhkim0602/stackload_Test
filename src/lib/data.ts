@@ -2,9 +2,19 @@ import type { Tech, Collection, Guide, Company } from "@/lib/types";
 
 export const TECHS: Tech[] = [
   // frontend
-  { slug: "nextjs", name: "Next.js", category: "frontend", description: "React 기반 풀스택 웹 프레임워크", tags: ["react", "ssr", "edge"], homepage: "https://nextjs.org", license: "MIT", version: "15", logoUrl: "https://cdn.simpleicons.org/nextdotjs" },
-  { slug: "react", name: "React", category: "frontend", description: "컴포넌트 기반 UI 라이브러리", tags: ["ui", "library"], homepage: "https://react.dev", license: "MIT", version: "19", logoUrl: "https://cdn.simpleicons.org/react" },
-  { slug: "tailwind", name: "Tailwind CSS", category: "frontend", description: "유틸리티 퍼스트 CSS 프레임워크", tags: ["css", "utility"], homepage: "https://tailwindcss.com", license: "MIT", version: "4", logoUrl: "https://cdn.simpleicons.org/tailwindcss" },
+  { slug: "nextjs", name: "Next.js", category: "frontend", description: "React 기반 풀스택 웹 프레임워크", tags: ["react", "ssr", "edge"], homepage: "https://nextjs.org", docs: "https://nextjs.org/docs", repo: "https://github.com/vercel/next.js", license: "MIT", version: "15", logoUrl: "https://cdn.simpleicons.org/nextdotjs", resources: [
+    { title: "Next.js 공식 문서", url: "https://nextjs.org/docs" },
+    { title: "App Router 가이드", url: "https://nextjs.org/docs/app" },
+    { title: "Vercel 튜토리얼", url: "https://vercel.com/docs" }
+  ] },
+  { slug: "react", name: "React", category: "frontend", description: "컴포넌트 기반 UI 라이브러리", tags: ["ui", "library"], homepage: "https://react.dev", docs: "https://react.dev/learn", repo: "https://github.com/facebook/react", license: "MIT", version: "19", logoUrl: "https://cdn.simpleicons.org/react", resources: [
+    { title: "React 공식 튜토리얼", url: "https://react.dev/learn" },
+    { title: "Hooks 소개", url: "https://react.dev/reference/react" }
+  ] },
+  { slug: "tailwind", name: "Tailwind CSS", category: "frontend", description: "유틸리티 퍼스트 CSS 프레임워크", tags: ["css", "utility"], homepage: "https://tailwindcss.com", docs: "https://tailwindcss.com/docs", repo: "https://github.com/tailwindlabs/tailwindcss", license: "MIT", version: "4", logoUrl: "https://cdn.simpleicons.org/tailwindcss", resources: [
+    { title: "공식 문서", url: "https://tailwindcss.com/docs" },
+    { title: "플러그인 에코시스템", url: "https://tailwindcss.com/docs/plugins" }
+  ] },
   { slug: "vue", name: "Vue.js", category: "frontend", description: "진입장벽이 낮은 프론트엔드 프레임워크", tags: ["spa", "progressive"], homepage: "https://vuejs.org", license: "MIT", logoUrl: "https://cdn.simpleicons.org/vuedotjs" },
   { slug: "svelte", name: "Svelte", category: "frontend", description: "컴파일 기반 프론트엔드 프레임워크", tags: ["compiler", "spa"], homepage: "https://svelte.dev", license: "MIT", logoUrl: "https://cdn.simpleicons.org/svelte" },
 
@@ -113,10 +123,10 @@ export function getGuideBySlug(slug: string) {
 }
 
 export const COMPANIES: Company[] = [
-  { name: "Acme", category: "ecommerce", logoUrl: "/logos/acme.svg", techSlugs: ["nextjs", "react", "kubernetes", "postgres"] },
-  { name: "Globex", category: "mobility", logoUrl: "/logos/globex.svg", techSlugs: ["spring", "kafka", "prometheus", "grafana"] },
-  { name: "Soylent", category: "foodtech", logoUrl: "/logos/soylent.svg", techSlugs: ["django", "redis", "clickhouse"] },
-  { name: "Initech", category: "finance", logoUrl: "/logos/initech.svg", techSlugs: ["nest", "mysql", "terraform"] },
+  { name: "Acme", region: "대한민국", category: "ecommerce", logoUrl: "", techSlugs: ["nextjs", "react", "kubernetes", "postgres"] },
+  { name: "Globex", region: "대한민국", category: "mobility", logoUrl: "", techSlugs: ["spring", "kafka", "prometheus", "grafana"] },
+  { name: "Soylent", region: "대한민국", category: "foodtech", logoUrl: "", techSlugs: ["django", "redis", "clickhouse"] },
+  { name: "Initech", region: "대한민국", category: "finance", logoUrl: "", techSlugs: ["nest", "mysql", "terraform"] },
 ];
 
 

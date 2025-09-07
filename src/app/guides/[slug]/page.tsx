@@ -5,22 +5,24 @@ import Link from "next/link";
 import { getGuideBySlug, GUIDES } from "@/lib/data";
 import { notFound } from "next/navigation";
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
   return GUIDES.map((g) => ({ slug: g.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const guide = getGuideBySlug(params.slug);
+  const { slug } = await params;
+  const guide = getGuideBySlug(slug);
   return {
     title: guide ? `${guide.title} | stackload` : "가이드 | stackload",
     description: guide?.summary,
   };
 }
 
-export default function GuidePage({ params }: Props) {
-  const guide = getGuideBySlug(params.slug);
+export default async function GuidePage({ params }: Props) {
+  const { slug } = await params;
+  const guide = getGuideBySlug(slug);
   if (!guide) return notFound();
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10 space-y-6">

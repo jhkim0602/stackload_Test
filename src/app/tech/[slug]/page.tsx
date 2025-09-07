@@ -6,22 +6,24 @@ import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/tech/favorite-button";
 import { COMPANIES } from "@/lib/data";
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
   return TECHS.map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const t = getTechBySlug(params.slug);
+  const { slug } = await params;
+  const t = getTechBySlug(slug);
   return {
     title: t ? `${t.name} | stackload` : "기술 | stackload",
     description: t?.description,
   };
 }
 
-export default function TechDetailPage({ params }: Props) {
-  const t = getTechBySlug(params.slug);
+export default async function TechDetailPage({ params }: Props) {
+  const { slug } = await params;
+  const t = getTechBySlug(slug);
   if (!t) return notFound();
 
   return (
@@ -48,31 +50,43 @@ export default function TechDetailPage({ params }: Props) {
           <CardContent className="text-sm text-muted-foreground space-y-1">
             {t.version && <p>버전: v{t.version}</p>}
             {t.license && <p>라이선스: {t.license}</p>}
-            {t.homepage && (
-              <p>
-                홈페이지: <a className="underline" href={t.homepage} target="_blank" rel="noreferrer">{t.homepage}</a>
-              </p>
-            )}
+            {t.homepage && (<p>홈페이지: <a className="underline" href={t.homepage} target="_blank" rel="noreferrer">{t.homepage}</a></p>)}
+            {t.docs && (<p>문서: <a className="underline" href={t.docs} target="_blank" rel="noreferrer">{t.docs}</a></p>)}
+            {t.repo && (<p>Repo: <a className="underline" href={t.repo} target="_blank" rel="noreferrer">{t.repo}</a></p>)}
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>기술 스택별 기업</CardTitle>
+            <CardTitle>리소스</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {COMPANIES.filter((c) => c.techSlugs.includes(t.slug)).map((c) => (
-                <span key={c.name} className="inline-flex items-center gap-2 rounded-md border px-2 py-1 text-xs">
-                  {c.logoUrl ? <img src={c.logoUrl} alt={`${c.name} logo`} width={14} height={14} /> : null}
-                  {c.name}
-                </span>
+            <ul className="list-disc pl-4 text-sm text-muted-foreground space-y-1">
+              {(t.resources ?? []).map((r) => (
+                <li key={r.url}><a className="underline" href={r.url} target="_blank" rel="noreferrer">{r.title}</a></li>
               ))}
-            </div>
+            </ul>
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>이 기술을 쓰는 기업</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            {COMPANIES.filter((c) => c.techSlugs.includes(t.slug)).map((c) => (
+              <span key={c.name} className="inline-flex items-center gap-2 rounded-md border px-2 py-1 text-xs">
+                {c.logoUrl ? <img src={c.logoUrl} alt={`${c.name} logo`} width={14} height={14} /> : null}
+                {c.name}
+              </span>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
+
 
 

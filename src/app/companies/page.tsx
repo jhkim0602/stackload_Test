@@ -1,15 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { COMPANIES, TECHS } from "@/lib/data";
+import { TECHS } from "@/lib/data";
+
+type C = { slug: string; name: string; category: string; region?: string; logoUrl?: string; techSlugs: string[]; sourceName?: string };
 
 export default function CompaniesPage() {
-  const categories = useMemo(() => ["all", ...Array.from(new Set(COMPANIES.map((c) => c.category)))], []);
+  const [data, setData] = useState<C[]>([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await fetch("/api/companies", { cache: "no-store" });
+        const res: C[] = r.ok ? await r.json() : [];
+        setData(res);
+      } catch {}
+    })();
+  }, []);
+
+  const categories = useMemo(() => ["all", ...Array.from(new Set(data.map((c) => c.category)))], [data]);
   const [category, setCategory] = useState<string>("all");
-  const filtered = useMemo(() => (category === "all" ? COMPANIES : COMPANIES.filter((c) => c.category === category)), [category]);
+  const filtered = useMemo(() => (category === "all" ? data : data.filter((c) => c.category === category)), [category, data]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-6">
@@ -38,6 +51,7 @@ export default function CompaniesPage() {
                 const t = TECHS.find((x) => x.slug === s);
                 return <Badge key={s} variant="secondary">{t?.name ?? s}</Badge>;
               })}
+              {c.sourceName ? <div className="text-[10px] text-muted-foreground basis-full mt-1">source: {c.sourceName}</div> : null}
             </CardContent>
           </Card>
         ))}

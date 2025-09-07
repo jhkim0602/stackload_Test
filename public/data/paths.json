@@ -1,0 +1,33 @@
+[
+  {
+    "slug": "frontend-web",
+    "title": "프론트엔드 웹",
+    "steps": [
+      { "label": "기초", "items": ["HTML/CSS", "JavaScript", "TypeScript"] },
+      { "label": "프레임워크", "items": ["React", "Next.js"] },
+      { "label": "스타일", "items": ["Tailwind", "shadcn/ui"] },
+      { "label": "품질", "items": ["테스트(Jest/Playwright)", "성능/접근성"] },
+      { "label": "배포", "items": ["Vercel", "모니터링(Sentry)"] }
+    ],
+    "references": [
+      { "title": "React 공식", "url": "https://react.dev/learn" },
+      { "title": "Next.js 문서", "url": "https://nextjs.org/docs" }
+    ]
+  },
+  {
+    "slug": "backend-api",
+    "title": "백엔드 API",
+    "steps": [
+      { "label": "언어/런타임", "items": ["Java", "Node.js"] },
+      { "label": "프레임워크", "items": ["Spring", "NestJS"] },
+      { "label": "데이터", "items": ["PostgreSQL", "Redis"] },
+      { "label": "메시징", "items": ["Kafka"] },
+      { "label": "운영", "items": ["Docker", "Kubernetes", "모니터링"] }
+    ],
+    "references": [
+      { "title": "Spring 문서", "url": "https://spring.io/guides" },
+      { "title": "NestJS 문서", "url": "https://docs.nestjs.com/" }
+    ]
+  }
+]
+

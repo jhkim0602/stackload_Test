@@ -18,6 +18,7 @@ type Tech = {
   category: string;
   tags: string[];
   description: string;
+  logoUrl?: string;
 };
 
 const TECHS_LOCAL: Tech[] = TECHS as unknown as Tech[];
@@ -75,7 +76,7 @@ export default function SearchPage() {
             ))}
           </SelectContent>
         </Select>
-        <Button asChild variant="outline" className="sm:ml-auto"><Link href="/compare">비교로 이동</Link></Button>
+        <Button asChild variant="outline" className="sm:ml-auto"><Link href="/insights">인사이트 보기</Link></Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -94,6 +95,9 @@ export default function SearchPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">{t.description}</p>
+              {"sourceName" in t ? (
+                <p className="text-xs text-muted-foreground">source: {(t as any).sourceName}</p>
+              ) : null}
               <div className="flex flex-wrap gap-2">
                 {t.tags.map((tag) => (
                   <Badge key={tag} variant="outline">#{tag}</Badge>
