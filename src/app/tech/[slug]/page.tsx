@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTechBySlug, TECHS } from "@/lib/data";
@@ -29,7 +30,7 @@ export default async function TechDetailPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10 space-y-6">
       <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-        {t.logoUrl ? <img src={t.logoUrl} alt={`${t.name} logo`} width={28} height={28} /> : null}
+        {t.logoUrl ? <Image src={t.logoUrl} alt={`${t.name} logo`} width={28} height={28} /> : null}
         {t.name}
       </h1>
       <p className="text-muted-foreground">{t.description}</p>
@@ -77,7 +78,7 @@ export default async function TechDetailPage({ params }: Props) {
           <div className="flex flex-wrap gap-2">
             {COMPANIES.filter((c) => c.techSlugs.includes(t.slug)).map((c) => (
               <span key={c.name} className="inline-flex items-center gap-2 rounded-md border px-2 py-1 text-xs">
-                {c.logoUrl ? <img src={c.logoUrl} alt={`${c.name} logo`} width={14} height={14} /> : null}
+                {c.logoUrl ? <Image src={c.logoUrl} alt={`${c.name} logo`} width={14} height={14} /> : null}
                 {c.name}
               </span>
             ))}

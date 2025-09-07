@@ -1,13 +1,10 @@
 "use client";
 
 import { create } from "zustand";
+import type { Tech, TechCategory } from "@/lib/types";
 
-export type TechItem = {
-  slug: string;
-  name: string;
-  category: "frontend" | "backend" | "data";
-  tags: string[];
-  description: string;
+export type TechItem = Pick<Tech, "slug" | "name" | "category" | "tags" | "description" | "logoUrl"> & {
+  category: TechCategory;
 };
 
 type TechState = {

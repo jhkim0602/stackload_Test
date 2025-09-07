@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type Item = { slug: string; name: string; logoUrl?: string; category?: string };
@@ -28,7 +29,7 @@ export function TabsTrending() {
         <Card key={t.slug}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              {t.logoUrl ? <img src={t.logoUrl} alt="logo" width={18} height={18} /> : null}
+              {t.logoUrl ? <Image src={t.logoUrl} alt="logo" width={18} height={18} /> : null}
               {t.name}
             </CardTitle>
           </CardHeader>

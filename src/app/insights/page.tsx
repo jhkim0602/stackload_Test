@@ -10,6 +10,7 @@ import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KR_BLOGS, KR_JOBS, KR_NEWS } from "@/lib/insights-data";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 type Job = { id: string; company: string; title: string; techs: string[] };
 
@@ -34,12 +35,11 @@ const SAMPLE_JOBS: Job[] = [
   { id: "elice-python", company: "엘리스", title: "백엔드 엔지니어 (Python)", techs: ["python", "django", "postgres"] },
 ];
 
-export default function InsightsPage() {
+function InsightsInner() {
   const [query, setQuery] = useState("");
   const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
   const [tab, setTab] = useState("jobs");
   const [techCategory, setTechCategory] = useState<CategoryLabel>("언어");
-  const languages = useMemo(() => TECHS.filter((t) => t.category === "language").slice(0, 16), []);
   const techChips = useMemo(() => TECHS.filter((t) => t.category === categoryLabelToKey[techCategory]).slice(0, 30), [techCategory]);
 
   const router = useRouter();
@@ -247,6 +247,14 @@ export default function InsightsPage() {
         </Card>
       </section>
     </div>
+  );
+}
+
+export default function InsightsPage() {
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">로딩 중…</div>}>
+      <InsightsInner />
+    </Suspense>
   );
 }
 

@@ -5,7 +5,7 @@ import type { Tech } from "@/lib/types";
 export async function GET() {
   const raw = techs as unknown as Tech[];
   const withSource = raw.map((t) => ({ ...t, sourceName: "public/data/techs.json" }));
-  return NextResponse.json(withSource);
+  return NextResponse.json(withSource satisfies (Tech & { sourceName: string })[]);
 }
 
 

@@ -12,7 +12,7 @@ type PathItem = {
 export async function GET() {
   const raw = data as unknown as PathItem[];
   const withSource: PathItem[] = raw.map((p) => ({ ...p, sourceName: "public/data/paths.json" }));
-  return NextResponse.json(withSource);
+  return NextResponse.json(withSource satisfies PathItem[]);
 }
 
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 type Item = { slug: string; name: string; logoUrl?: string; category?: string };
 
@@ -23,7 +24,7 @@ export function Ticker() {
         <div className="flex animate-[ticker_30s_linear_infinite] gap-6 will-change-transform" style={{ maskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)" }}>
           {[...items, ...items].map((t, idx) => (
             <div key={t.slug + idx} className="shrink-0 rounded-xl border bg-white/60 backdrop-blur px-4 py-2 flex items-center gap-2">
-              {t.logoUrl ? <img src={t.logoUrl} alt="logo" width={16} height={16} /> : null}
+              {t.logoUrl ? <Image src={t.logoUrl} alt="logo" width={16} height={16} /> : null}
               <span className="text-sm">{t.name}</span>
             </div>
           ))}

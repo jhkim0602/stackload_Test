@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import Image from "next/image";
 import Fuse from "fuse.js";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,19 +13,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTechStore } from "@/store/tech-store";
 import { TECHS } from "@/lib/data";
+import type { Tech } from "@/lib/types";
+import type { TechItem } from "@/store/tech-store";
 
-type Tech = {
-  slug: string;
-  name: string;
-  category: string;
-  tags: string[];
-  description: string;
-  logoUrl?: string;
+type TechWithSource = Tech & { sourceName?: string };
+
+const TECHS_LOCAL: TechWithSource[] = TECHS as unknown as TechWithSource[];
+
+type SearchPageProps = {
+  searchParams?: {
+    q?: string;
+    category?: string;
+  };
 };
 
-const TECHS_LOCAL: Tech[] = TECHS as unknown as Tech[];
-
-export default function SearchPage() {
+function SearchInner(_props: SearchPageProps) {
   const sp = useSearchParams();
   const [query, setQuery] = useState(sp.get("q") ?? "");
   const [category, setCategory] = useState(sp.get("category") ?? "all");
@@ -34,12 +38,16 @@ export default function SearchPage() {
       try {
         const res = await fetch("/api/techs");
         if (res.ok) {
-          const extra: Tech[] = await res.json();
-          setItems([...(TECHS_LOCAL as any), ...extra]);
+          const extra: TechWithSource[] = await res.json();
+          const toTechItems = (arr: TechWithSource[]): TechItem[] =>
+            arr.map((t) => ({ slug: t.slug, name: t.name, category: t.category, tags: t.tags, description: t.description, logoUrl: t.logoUrl }));
+          setItems(toTechItems([...TECHS_LOCAL, ...extra]));
           return;
         }
       } catch {}
-      setItems(TECHS_LOCAL as any);
+      const toTechItems = (arr: TechWithSource[]): TechItem[] =>
+        arr.map((t) => ({ slug: t.slug, name: t.name, category: t.category, tags: t.tags, description: t.description, logoUrl: t.logoUrl }));
+      setItems(toTechItems(TECHS_LOCAL));
     }
     load();
   }, [setItems]);
@@ -86,7 +94,7 @@ export default function SearchPage() {
               <CardTitle className="flex items-center justify-between gap-3">
                 <Link href={`/tech/${t.slug}`} className="hover:underline flex items-center gap-2">
                   {t.logoUrl ? (
-                    <img src={t.logoUrl} alt={`${t.name} logo`} width={18} height={18} />
+                    <Image src={t.logoUrl} alt={`${t.name} logo`} width={18} height={18} />
                   ) : null}
                   {t.name}
                 </Link>
@@ -95,8 +103,8 @@ export default function SearchPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">{t.description}</p>
-              {"sourceName" in t ? (
-                <p className="text-xs text-muted-foreground">source: {(t as any).sourceName}</p>
+              {t.sourceName ? (
+                <p className="text-xs text-muted-foreground">source: {t.sourceName}</p>
               ) : null}
               <div className="flex flex-wrap gap-2">
                 {t.tags.map((tag) => (
@@ -108,6 +116,14 @@ export default function SearchPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage(props: SearchPageProps) {
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">로딩 중…</div>}>
+      <SearchInner {...props} />
+    </Suspense>
   );
 }
 

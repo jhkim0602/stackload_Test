@@ -57,6 +57,7 @@ export type CompanyCategory =
 export type Company = {
   name: string;
   category: CompanyCategory;
+  region?: string;
   logoUrl?: string;
   techSlugs: string[];
 };
