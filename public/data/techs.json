@@ -1,0 +1,21 @@
+[
+  {"slug":"nodejs","name":"Node.js","category":"backend","description":"V8 기반 런타임","tags":["javascript","runtime"],"homepage":"https://nodejs.org","license":"MIT","logoUrl":"https://cdn.simpleicons.org/nodedotjs"},
+  {"slug":"docker-compose","name":"Docker Compose","category":"devops","description":"멀티 컨테이너 정의/실행","tags":["container","compose"],"homepage":"https://docs.docker.com/compose/","license":"Apache-2.0","logoUrl":"https://cdn.simpleicons.org/docker"},
+  {"slug":"sentry","name":"Sentry","category":"devops","description":"에러/성능 모니터링","tags":["monitoring","apm"],"homepage":"https://sentry.io","license":"BSL-1.1","logoUrl":"https://cdn.simpleicons.org/sentry"},
+  {"slug":"algolia","name":"Algolia","category":"devops","description":"Search-as-a-Service","tags":["search","api"],"homepage":"https://www.algolia.com","logoUrl":"https://cdn.simpleicons.org/algolia"},
+  {"slug":"aws-elb","name":"AWS ELB","category":"devops","description":"로드 밸런서","tags":["loadbalancer"],"homepage":"https://aws.amazon.com/elasticloadbalancing/","logoUrl":"https://cdn.simpleicons.org/amazonaws"},
+  {"slug":"gcp","name":"Google Cloud Platform","category":"devops","description":"클라우드 서비스 스위트","tags":["cloud"],"homepage":"https://cloud.google.com","logoUrl":"https://cdn.simpleicons.org/googlecloud"},
+  {"slug":"amazon-sqs","name":"Amazon SQS","category":"devops","description":"메시지 큐","tags":["mq"],"homepage":"https://aws.amazon.com/sqs/","logoUrl":"https://cdn.simpleicons.org/amazonaws"},
+  {"slug":"varnish","name":"Varnish","category":"devops","description":"HTTP 캐시","tags":["cache"],"homepage":"https://varnish-cache.org","license":"BSD-2-Clause","logoUrl":"https://cdn.simpleicons.org/varnish"},
+  {"slug":"redis","name":"Redis","category":"database","description":"인메모리 키-값 저장소","tags":["cache"],"homepage":"https://redis.io","logoUrl":"https://cdn.simpleicons.org/redis"},
+  {"slug":"mssql","name":"Microsoft SQL Server","category":"database","description":"관계형 DBMS","tags":["rdbms"],"homepage":"https://www.microsoft.com/sql-server","logoUrl":"https://cdn.simpleicons.org/microsoftsqlserver"},
+  {"slug":"gmail","name":"Gmail","category":"collaboration","description":"이메일 서비스","tags":["email"],"homepage":"https://mail.google.com","logoUrl":"https://cdn.simpleicons.org/gmail"},
+  {"slug":"outlook","name":"Microsoft Outlook","category":"collaboration","description":"이메일/캘린더","tags":["email","calendar"],"homepage":"https://outlook.live.com","logoUrl":"https://cdn.simpleicons.org/microsoftoutlook"},
+  {"slug":"swift","name":"Swift","category":"language","description":"Apple 프로그래밍 언어","tags":["ios","mac"],"homepage":"https://swift.org","logoUrl":"https://cdn.simpleicons.org/swift"},
+  {"slug":"dart","name":"Dart","category":"language","description":"구글의 언어","tags":["flutter"],"homepage":"https://dart.dev","logoUrl":"https://cdn.simpleicons.org/dart"},
+  {"slug":"alpinejs","name":"AlpineJS","category":"frontend","description":"경량 UI 프레임워크","tags":["ui","js"],"homepage":"https://alpinejs.dev","logoUrl":"https://cdn.simpleicons.org/alpinelinux"},
+  {"slug":"react-query","name":"React Query","category":"frontend","description":"데이터 페칭/캐시","tags":["react"],"homepage":"https://tanstack.com/query/latest","logoUrl":"https://cdn.simpleicons.org/reactquery"},
+  {"slug":"google-maps","name":"Google Maps","category":"frontend","description":"지도 API","tags":["maps"],"homepage":"https://developers.google.com/maps","logoUrl":"https://cdn.simpleicons.org/googlemaps"},
+  {"slug":"ionic","name":"Ionic","category":"mobile","description":"크로스플랫폼 프레임워크","tags":["mobile","hybrid"],"homepage":"https://ionicframework.com","logoUrl":"https://cdn.simpleicons.org/ionic"}
+]
+

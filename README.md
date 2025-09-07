@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+stackload – 개발자 기술스택 가이드 플랫폼 (MVP)
 
-## Getting Started
+개발자가 기술을 탐색/비교/학습할 수 있는 UI 시뮬레이터입니다.
 
-First, run the development server:
+명령어
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+구성
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 홈: 소개/Hero, 컬렉션 바로가기
+- 검색: Fuse.js 기반 클라이언트 검색 + 카테고리 필터
+- 기술 상세: 기본 정보/태그/가이드 섹션
+- 비교: 2개 기술 요약/메타/기능 테이블
+- 컬렉션: 분야별 기술 묶음
+- 회사: 예시 회사별 스택 카드
+- 가이드: 가이드 목록 페이지
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+디자인 시스템
 
-## Learn More
+- Tailwind v4, shadcn/ui
+- next-themes 다크모드, sonner 토스트
+- 반응형 그리드, a11y 고려(키보드 포커스, ARIA 레이블)
 
-To learn more about Next.js, take a look at the following resources:
+QA 체크리스트(발췌)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 키보드로 헤더 메뉴/검색 이동 가능
+- 다크/라이트 전환 시 컬러 콘트라스트 유지
+- 좁은 화면에서 카드 1열, 넓은 화면에서 2–3열
