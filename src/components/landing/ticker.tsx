@@ -13,28 +13,95 @@ export function Ticker() {
         const r = await fetch("/api/techs");
         if (!r.ok) return;
         const data: Item[] = await r.json();
-        setItems(data.slice(0, 18));
+        setItems(data.slice(0, 24));
       } catch {}
     })();
   }, []);
 
   return (
-    <section className="border-t py-10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="flex animate-[ticker_30s_linear_infinite] gap-6 will-change-transform" style={{ maskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)" }}>
-          {[...items, ...items].map((t, idx) => (
-            <div key={t.slug + idx} className="shrink-0 rounded-xl border bg-white/60 backdrop-blur px-4 py-2 flex items-center gap-2">
-              {t.logoUrl ? <Image src={t.logoUrl} alt="logo" width={16} height={16} /> : null}
-              <span className="text-sm">{t.name}</span>
-            </div>
-          ))}
-        </div>
+    <section className="border-t py-16 w-full overflow-hidden space-y-8">
+      {/* 첫 번째 줄 - 왼쪽으로 이동 */}
+      <div
+        className="flex animate-[ticker_30s_linear_infinite] gap-16 will-change-transform"
+        style={{
+          maskImage:
+            "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)",
+        }}
+      >
+        {[...items, ...items, ...items].map((t, idx) => (
+          <div
+            key={`row1-${t.slug}-${idx}`}
+            className="shrink-0 flex items-center justify-center"
+          >
+            {t.logoUrl ? (
+              <Image
+                src={t.logoUrl}
+                alt={t.name}
+                width={64}
+                height={64}
+                className="opacity-70 hover:opacity-100 transition-opacity duration-300 drop-shadow-lg"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white/70 text-xs font-medium">
+                {t.name.slice(0, 2).toUpperCase()}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
+
+      {/* 두 번째 줄 - 오른쪽으로 이동 */}
+      <div
+        className="flex animate-[ticker-reverse_30s_linear_infinite] gap-16 will-change-transform"
+        style={{
+          maskImage:
+            "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)",
+        }}
+      >
+        {[
+          ...items.slice().reverse(),
+          ...items.slice().reverse(),
+          ...items.slice().reverse(),
+        ].map((t, idx) => (
+          <div
+            key={`row2-${t.slug}-${idx}`}
+            className="shrink-0 flex items-center justify-center"
+          >
+            {t.logoUrl ? (
+              <Image
+                src={t.logoUrl}
+                alt={t.name}
+                width={64}
+                height={64}
+                className="opacity-70 hover:opacity-100 transition-opacity duration-300 drop-shadow-lg"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white/70 text-xs font-medium">
+                {t.name.slice(0, 2).toUpperCase()}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
       <style jsx global>{`
-        @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes ticker {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-33.333%);
+          }
+        }
+        @keyframes ticker-reverse {
+          from {
+            transform: translateX(-33.333%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
       `}</style>
     </section>
   );
 }
-
-

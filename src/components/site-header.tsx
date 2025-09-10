@@ -22,6 +22,19 @@ export function SiteHeader() {
           <span>stackload</span>
         </Link>
 
+        {/* Navigation Links */}
+        <div className="hidden md:flex items-center gap-6 ml-6">
+          <Link href="/search" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            탐색
+          </Link>
+          <Link href="/insights" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            인사이트
+          </Link>
+          <Link href="/paths" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            로드맵
+          </Link>
+        </div>
+
         <div className="ml-auto flex items-center gap-2">
           <div className="hidden sm:flex items-center gap-2">
             <form action="/search" className="flex items-center gap-2">
@@ -39,6 +52,19 @@ export function SiteHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <div className="md:hidden">
+                <DropdownMenuLabel>메뉴</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <Link href="/search">탐색</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/insights">인사이트</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/paths">로드맵</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </div>
               <DropdownMenuLabel>내 계정</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
