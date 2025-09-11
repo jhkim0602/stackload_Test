@@ -30,9 +30,6 @@ export function SiteHeader() {
           <Link href="/insights" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             인사이트
           </Link>
-          <Link href="/paths" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            로드맵
-          </Link>
         </div>
 
         <div className="ml-auto flex items-center gap-2">
@@ -59,9 +56,6 @@ export function SiteHeader() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/insights">인사이트</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/paths">로드맵</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
               </div>

@@ -5,6 +5,7 @@ import { InViewFade } from "@/components/inview";
 import { HeroGlass } from "@/components/landing/hero-glass";
 import { Ticker } from "@/components/landing/ticker";
 import { TabsTrending } from "@/components/landing/tabs-trending";
+import { CompanyPreview } from "@/components/home/company-preview";
 
 export default function Home() {
   return (
@@ -26,7 +27,26 @@ export default function Home() {
           <TabsTrending />
         </InViewFade>
 
-        {/* Section 3: 신뢰성 설명 */}
+        {/* Section 3: 기업별 사용 스택을 한눈에 */}
+        <InViewFade>
+          <section className="py-24">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                기업별 사용 스택을 한눈에!
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                국내 주요 기업들이 어떤 기술 스택을 사용하는지 카테고리별로 살펴보세요
+              </p>
+            </div>
+
+            <div className="mb-12">
+              {/* 기업별 스택 미리보기 */}
+              <CompanyPreview />
+            </div>
+          </section>
+        </InViewFade>
+
+        {/* Section 4: 신뢰성 설명 */}
         <InViewFade>
           <section className="py-24 border-t">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -43,7 +63,7 @@ export default function Home() {
                     파이프라인
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4" /> 실시간 검색/비교/컬렉션
+                    <CheckCircle2 className="size-4" /> 효율적인 검색/비교/컬렉션
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="size-4" /> 기업-기술 양방향 연결
