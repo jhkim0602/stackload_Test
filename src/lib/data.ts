@@ -1,4 +1,4 @@
-import type { Tech, Collection, Guide, Company } from "@/lib/types";
+import type { Tech, Collection, Guide } from "@/lib/types";
 
 export const TECHS: Tech[] = [
   // frontend
@@ -122,12 +122,8 @@ export function getGuideBySlug(slug: string) {
   return GUIDES.find((g) => g.slug === slug) ?? null;
 }
 
-export const COMPANIES: Company[] = [
-  { name: "Acme", region: "대한민국", category: "ecommerce", logoUrl: "", techSlugs: ["nextjs", "react", "kubernetes", "postgres"] },
-  { name: "Globex", region: "대한민국", category: "mobility", logoUrl: "", techSlugs: ["spring", "kafka", "prometheus", "grafana"] },
-  { name: "Soylent", region: "대한민국", category: "foodtech", logoUrl: "", techSlugs: ["django", "redis", "clickhouse"] },
-  { name: "Initech", region: "대한민국", category: "finance", logoUrl: "", techSlugs: ["nest", "mysql", "terraform"] },
-];
+// 회사 데이터는 이제 JSON 파일에서 관리됩니다
+// public/data/companies.json 파일을 참조하세요
 
 
 

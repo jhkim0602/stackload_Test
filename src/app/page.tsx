@@ -5,6 +5,8 @@ import { InViewFade } from "@/components/inview";
 import { HeroGlass } from "@/components/landing/hero-glass";
 import { Ticker } from "@/components/landing/ticker";
 import { TabsTrending } from "@/components/landing/tabs-trending";
+import { TechCompaniesPreview } from "@/components/home/tech-companies-preview";
+import { CommunityPreview } from "@/components/home/community-preview";
 
 export default function Home() {
   return (
@@ -26,7 +28,33 @@ export default function Home() {
           <TabsTrending />
         </InViewFade>
 
-        {/* Section 3: 신뢰성 설명 */}
+        {/* Section 3: 스택별 사용 기업을 한눈에 */}
+        <InViewFade>
+          <section className="py-24">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                스택별 사용 기업을 한눈에!
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                인기 기술들을 어떤 기업들이 사용하고 있는지 확인해보세요
+              </p>
+            </div>
+
+            <div className="mb-12">
+              {/* 스택별 기업 미리보기 */}
+              <TechCompaniesPreview />
+            </div>
+          </section>
+        </InViewFade>
+
+        {/* Section 4: 커뮤니티 */}
+        <InViewFade>
+          <section className="py-24">
+            <CommunityPreview />
+          </section>
+        </InViewFade>
+
+        {/* Section 5: 신뢰성 설명 */}
         <InViewFade>
           <section className="py-24 border-t">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -43,7 +71,7 @@ export default function Home() {
                     파이프라인
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4" /> 실시간 검색/비교/컬렉션
+                    <CheckCircle2 className="size-4" /> 효율적인 검색/비교/컬렉션
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="size-4" /> 기업-기술 양방향 연결

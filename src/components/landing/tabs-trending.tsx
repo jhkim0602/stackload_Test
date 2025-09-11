@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 type Item = { slug: string; name: string; logoUrl?: string; category?: string };
@@ -27,9 +27,10 @@ export function TabsTrending() {
   const render = (arr: Item[]) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {arr.map((t) => (
-        <div
+        <Link
           key={t.slug}
-          className="group relative overflow-hidden bg-white/30 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/50 transition-all duration-300 hover:scale-105 cursor-pointer"
+          href={`/tech/${t.slug}`}
+          className="group relative overflow-hidden bg-white/30 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/50 transition-all duration-300 hover:scale-105 cursor-pointer block"
         >
           {/* 로고를 오른쪽 배경으로 배치 */}
           {t.logoUrl && (
@@ -40,6 +41,10 @@ export function TabsTrending() {
                 width={128}
                 height={128}
                 className="object-contain w-full h-full"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
               />
             </div>
           )}
@@ -50,23 +55,30 @@ export function TabsTrending() {
           <div className="relative z-10">
             {/* 왼쪽 상단 로고 (작은 크기) */}
             <div className="flex items-center gap-3 mb-4">
-              {t.logoUrl ? (
-                <div className="w-10 h-10 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+              <div className="w-10 h-10 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                {t.logoUrl ? (
                   <Image
                     src={t.logoUrl}
                     alt="logo"
                     width={24}
                     height={24}
                     className="object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<span class="text-sm font-bold text-purple-700">${t.name.slice(0, 2).toUpperCase()}</span>`;
+                        parent.className = "w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm flex items-center justify-center";
+                      }
+                    }}
                   />
-                </div>
-              ) : (
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm flex items-center justify-center">
+                ) : (
                   <span className="text-sm font-bold text-purple-700">
                     {t.name.slice(0, 2).toUpperCase()}
                   </span>
-                </div>
-              )}
+                )}
+              </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 group-hover:text-gray-900 transition-colors">
                   {t.name}
@@ -93,7 +105,7 @@ export function TabsTrending() {
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
@@ -105,9 +117,10 @@ export function TabsTrending() {
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             인기 기술 스택
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-2">
             개발자들이 가장 많이 사용하는 기술들을 확인해보세요
           </p>
+          <p className="text-sm text-gray-400">※ 현재 표시된 데이터는 임시 데이터입니다</p>
         </div>
         <Tabs defaultValue="trending">
           <TabsList>
