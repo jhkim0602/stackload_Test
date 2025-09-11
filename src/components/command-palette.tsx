@@ -31,7 +31,6 @@ export function CommandPalette() {
             { label: "인사이트", href: "/insights" },
             { label: "컬렉션", href: "/collections" },
             { label: "회사", href: "/companies" },
-            { label: "가이드", href: "/guides" },
           ].map((r) => (
             <CommandItem key={r.href} onSelect={() => router.push(r.href)}>
               {r.label}

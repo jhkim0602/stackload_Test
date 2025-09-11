@@ -65,7 +65,7 @@ export function TechStackInsights({ className = "" }: TechStackInsightsProps) {
         });
 
         // 사용 기업 수로 정렬
-        techStacksData.sort((a, b) => b.usageCount - a.usageCount);
+        techStacksData.sort((a: any, b: any) => b.usageCount - a.usageCount);
         
         setTechStacks(techStacksData);
       } catch (error) {

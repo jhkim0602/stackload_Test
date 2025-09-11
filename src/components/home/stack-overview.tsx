@@ -68,7 +68,7 @@ export function StackOverview({ className = "" }: StackOverviewProps) {
         });
 
         const topTechsByUsage = techUsageCount
-          .sort((a, b) => b.usageCount - a.usageCount)
+          .sort((a: any, b: any) => b.usageCount - a.usageCount)
           .slice(0, 6);
 
         setOverview({

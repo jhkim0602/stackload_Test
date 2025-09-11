@@ -23,6 +23,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "assets.ably.live" }, // 에이블리
       { protocol: "https", hostname: "www.jobplanet.co.kr" }, // 잡플래닛
       { protocol: "https", hostname: "ic.zigbang.com" }, // 직방
+      // 사용자 아바터 이미지
+      { protocol: "https", hostname: "images.unsplash.com" }, // Unsplash
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",

@@ -90,8 +90,9 @@ export default async function TechDetailPage({ params }: Props) {
   if (!t) return notFound();
 
   // 핵심 지표 계산
-  const companiesResponse = await fetch('http://localhost:3000/api/companies');
-  const companies = await companiesResponse.json();
+  // 서버사이드에서는 절대 경로 대신 파일에서 직접 읽기
+  const companiesData = await import('@/../public/data/companies.json');
+  const companies = companiesData.default;
   const usingCompanies = companies.filter((company: any) => 
     company.techSlugs.includes(t.slug)
   );

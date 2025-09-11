@@ -72,7 +72,7 @@ export function PopularTechs({ className = "" }: PopularTechsProps) {
         });
 
         // 트렌드 점수 순으로 정렬
-        techUsage.sort((a, b) => b.stats.trendScore - a.stats.trendScore);
+        techUsage.sort((a: PopularTech, b: PopularTech) => b.stats.trendScore - a.stats.trendScore);
         
         setTechs(techUsage);
       } catch (error) {

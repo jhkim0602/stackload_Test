@@ -41,6 +41,10 @@ export function CompanyPreview({ className = "" }: CompanyPreviewProps) {
         setCompanies(previewData);
       } catch (error) {
         console.error('Failed to load company preview:', error);
+        // 임시 데이터로 대체
+        setCompanies([
+          { name: "임시 데이터", category: "tech", region: "서울", logoUrl: undefined, techSlugs: ["react", "node"], techCount: 2 }
+        ]);
       } finally {
         setLoading(false);
       }
@@ -106,7 +110,10 @@ export function CompanyPreview({ className = "" }: CompanyPreviewProps) {
           <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
             <Building2 className="w-4 h-4 text-white" />
           </div>
-          <h3 className="text-xl font-bold text-gray-800">기업별 사용 스택을 한눈에!</h3>
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">기업별 사용 스택을 한눈에!</h3>
+            <p className="text-xs text-gray-500 mt-1">※ 현재 표시된 데이터는 임시 데이터입니다</p>
+          </div>
         </div>
         <Link 
           href="/insights"
@@ -135,6 +142,14 @@ export function CompanyPreview({ className = "" }: CompanyPreviewProps) {
                     width={40}
                     height={40}
                     className="object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div class="w-10 h-10 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center text-sm font-bold text-gray-600">${company.name.charAt(0)}</div>`;
+                      }
+                    }}
                   />
                 ) : (
                   <div className="w-10 h-10 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center text-sm font-bold text-gray-600">
