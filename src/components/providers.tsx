@@ -2,6 +2,8 @@
 
 import { Toaster } from "sonner";
 import { ReactNode } from "react";
+import { SessionProvider } from "./providers/session-provider";
+import { AuthProvider } from "@/contexts/auth-context";
 
 type ProvidersProps = {
   children: ReactNode;
@@ -9,10 +11,12 @@ type ProvidersProps = {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <>
-      {children}
-      <Toaster position="top-right" richColors closeButton expand={false} />
-    </>
+    <SessionProvider>
+      <AuthProvider>
+        {children}
+        <Toaster position="top-right" richColors closeButton expand={false} />
+      </AuthProvider>
+    </SessionProvider>
   );
 }
 

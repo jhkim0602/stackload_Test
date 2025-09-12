@@ -1,0 +1,303 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id                   String            @id @default(cuid())
+  name                 String?
+  email                String?           @unique
+  emailVerified        DateTime?         @map("email_verified")
+  image                String?
+  avatarUrl            String?           @map("avatar_url")
+  location             String?
+  level                UserLevel         @default(Beginner)
+  bio                  String?
+  socialLinks          Json              @default("{}") @map("social_links")
+  interests            Json              @default("[]")
+  postsCount           Int               @default(0) @map("posts_count")
+  likesReceivedCount   Int               @default(0) @map("likes_received_count")
+  commentsCount        Int               @default(0) @map("comments_count")
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+  accounts             Account[]
+  bookmarks            Bookmark[]
+  commentLikes         CommentLike[]
+  comments             Comment[]
+  likes                Like[]
+  notifications        Notification[]
+  postApplications     PostApplication[] @relation("Applicant")
+  reviewedApplications PostApplication[] @relation("Reviewer")
+  posts                Post[]
+  sessions             Session[]
+  userTechs            UserTech[]
+
+  @@map("users")
+}
+
+model Post {
+  id                BigInt            @id @default(autoincrement())
+  authorId          String            @map("author_id")
+  type              PostType
+  title             String
+  description       String
+  location          String            @default("온라인")
+  duration          String?
+  schedule          String?
+  currentMembers    Int               @default(1) @map("current_members")
+  maxMembers        Int               @map("max_members")
+  status            PostStatus        @default(recruiting)
+  requirements      Json              @default("[]")
+  benefits          Json              @default("[]")
+  likesCount        Int               @default(0) @map("likes_count")
+  commentsCount     Int               @default(0) @map("comments_count")
+  viewsCount        Int               @default(0) @map("views_count")
+  applicationsCount Int               @default(0) @map("applications_count")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  bookmarks         Bookmark[]
+  comments          Comment[]
+  likes             Like[]
+  notifications     Notification[]
+  applications      PostApplication[]
+  tags              PostTag[]
+  author            User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
+}
+
+model Tech {
+  id                BigInt    @id @default(autoincrement())
+  name              String    @unique
+  slug              String    @unique
+  category          String
+  description       String?
+  logoUrl           String?   @map("logo_url")
+  color             String    @default("#6B7280")
+  popularity        Int       @default(0)
+  learningResources Json      @default("[]") @map("learning_resources")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  postTags          PostTag[]
+  companyTechs      CompanyTech[]
+
+  @@map("techs")
+}
+
+model Company {
+  id           BigInt        @id @default(autoincrement())
+  name         String        @unique
+  slug         String        @unique
+  description  String?
+  logoUrl      String?       @map("logo_url")
+  website      String?
+  size         String?
+  industry     String?
+  location     String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  companyTechs CompanyTech[]
+
+  @@map("companies")
+}
+
+model CompanyTech {
+  id        BigInt   @id @default(autoincrement())
+  companyId BigInt   @map("company_id")
+  techId    BigInt   @map("tech_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tech      Tech     @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, techId])
+  @@map("company_techs")
+}
+
+model Comment {
+  id           BigInt        @id @default(autoincrement())
+  postId       BigInt        @map("post_id")
+  authorId     String        @map("author_id")
+  parentId     BigInt?       @map("parent_id")
+  content      String
+  likesCount   Int           @default(0) @map("likes_count")
+  repliesCount Int           @default(0) @map("replies_count")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  commentLikes CommentLike[]
+  author       User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent       Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      Comment[]     @relation("CommentReplies")
+  post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Like {
+  id        BigInt   @id @default(autoincrement())
+  userId    String   @map("user_id")
+  postId    BigInt   @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model CommentLike {
+  id        BigInt   @id @default(autoincrement())
+  userId    String   @map("user_id")
+  commentId BigInt   @map("comment_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@map("comment_likes")
+}
+
+model PostApplication {
+  id            BigInt                @id @default(autoincrement())
+  postId        BigInt                @map("post_id")
+  applicantId   String                @map("applicant_id")
+  motivation    String
+  experience    String
+  availability  String
+  portfolioUrl  String?               @map("portfolio_url")
+  status        PostApplicationStatus @default(pending)
+  reviewedBy    String?               @map("reviewed_by")
+  reviewedAt    DateTime?             @map("reviewed_at")
+  reviewMessage String?               @map("review_message")
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @updatedAt @map("updated_at")
+  applicant     User                  @relation("Applicant", fields: [applicantId], references: [id], onDelete: Cascade)
+  post          Post                  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  reviewer      User?                 @relation("Reviewer", fields: [reviewedBy], references: [id])
+
+  @@unique([postId, applicantId])
+  @@map("post_applications")
+}
+
+model PostTag {
+  id        BigInt   @id @default(autoincrement())
+  postId    BigInt   @map("post_id")
+  techId    BigInt   @map("tech_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tech      Tech     @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, techId])
+  @@map("post_tags")
+}
+
+model UserTech {
+  id               BigInt   @id @default(autoincrement())
+  userId           String   @map("user_id")
+  techName         String   @map("tech_name")
+  proficiencyLevel Int      @default(1) @map("proficiency_level")
+  createdAt        DateTime @default(now()) @map("created_at")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, techName])
+  @@map("user_techs")
+}
+
+model Notification {
+  id            BigInt    @id @default(autoincrement())
+  recipientId   String    @map("recipient_id")
+  type          String
+  title         String
+  message       String
+  relatedPostId BigInt?   @map("related_post_id")
+  relatedUserId String?   @map("related_user_id")
+  isRead        Boolean   @default(false) @map("is_read")
+  readAt        DateTime? @map("read_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  recipient     User      @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  relatedPost   Post?     @relation(fields: [relatedPostId], references: [id])
+
+  @@map("notifications")
+}
+
+model Bookmark {
+  id        BigInt   @id @default(autoincrement())
+  userId    String   @map("user_id")
+  postId    BigInt   @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+enum UserLevel {
+  Beginner
+  Junior
+  MidLevel @map("Mid-Level")
+  Senior
+  Expert
+  Student
+}
+
+enum PostType {
+  project
+  study
+  mentoring
+}
+
+enum PostStatus {
+  recruiting
+  inProgress @map("in_progress")
+  completed
+  closed
+}
+
+enum PostApplicationStatus {
+  pending
+  approved
+  rejected
+}

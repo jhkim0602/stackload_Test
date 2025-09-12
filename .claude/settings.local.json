@@ -4,7 +4,10 @@
       "Bash(npm uninstall:*)",
       "Bash(npm run dev:*)",
       "Bash(git add:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []

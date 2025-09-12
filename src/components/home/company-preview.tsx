@@ -26,16 +26,19 @@ export function CompanyPreview({ className = "" }: CompanyPreviewProps) {
     async function loadCompanyPreview() {
       try {
         const response = await fetch('/api/companies');
-        const companies = await response.json();
+        const companiesData = await response.json();
+        
+        // API 응답 구조에 따라 데이터 추출
+        const companies = companiesData.data || companiesData;
 
         // 처음 6개 기업만 미리보기로 표시
         const previewData = companies.slice(0, 6).map((company: any) => ({
           name: company.name,
-          category: company.category,
-          region: company.region,
+          category: company.industry || company.category,
+          region: company.location || company.region,
           logoUrl: company.logoUrl,
-          techSlugs: company.techSlugs,
-          techCount: company.techSlugs.length
+          techSlugs: company.techSlugs || [],
+          techCount: (company.techSlugs || []).length
         }));
 
         setCompanies(previewData);

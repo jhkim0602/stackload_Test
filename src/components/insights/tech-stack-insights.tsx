@@ -37,39 +37,48 @@ export function TechStackInsights({ className = "" }: TechStackInsightsProps) {
           fetch('/api/companies')
         ]);
         
-        const techs = await techsResponse.json();
-        const companies = await companiesResponse.json();
+        if (!techsResponse.ok || !companiesResponse.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        
+        const techsData = await techsResponse.json();
+        const companiesData = await companiesResponse.json();
+        
+        // API 응답에서 data 속성 추출
+        const techs = Array.isArray(techsData.data) ? techsData.data : Array.isArray(techsData) ? techsData : [];
+        const companies = Array.isArray(companiesData.data) ? companiesData.data : Array.isArray(companiesData) ? companiesData : [];
 
         // 각 기술별로 사용하는 기업들 계산
         const techStacksData = techs.map((tech: any) => {
           const usingCompanies = companies.filter((company: any) => 
-            company.techSlugs.includes(tech.slug)
+            Array.isArray(company.techSlugs) && company.techSlugs.includes(tech.slug)
           );
 
           // 표시할 기업 로고 (최대 6개)
           const companyLogos = usingCompanies.slice(0, 6).map((company: any) => ({
-            name: company.name,
+            name: company.name || 'Unknown',
             logoUrl: company.logoUrl
           }));
 
           return {
-            slug: tech.slug,
-            name: tech.name,
-            category: tech.category,
-            description: tech.description,
+            slug: tech.slug || '',
+            name: tech.name || 'Unknown',
+            category: tech.category || 'other',
+            description: tech.description || '',
             logoUrl: tech.logoUrl,
             usageCount: usingCompanies.length,
             companyLogos,
             additionalCount: Math.max(0, usingCompanies.length - 6)
           };
-        });
+        }).filter((tech: any) => tech.slug); // 유효한 slug가 있는 것만 필터링
 
         // 사용 기업 수로 정렬
-        techStacksData.sort((a: any, b: any) => b.usageCount - a.usageCount);
+        techStacksData.sort((a: TechStack, b: TechStack) => b.usageCount - a.usageCount);
         
         setTechStacks(techStacksData);
       } catch (error) {
         console.error('Failed to load tech stacks:', error);
+        setTechStacks([]); // 오류 시 빈 배열로 설정
       } finally {
         setLoading(false);
       }

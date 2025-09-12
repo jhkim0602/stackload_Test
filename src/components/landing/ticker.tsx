@@ -12,9 +12,14 @@ export function Ticker() {
       try {
         const r = await fetch("/api/techs");
         if (!r.ok) return;
-        const data: Item[] = await r.json();
-        setItems(data.slice(0, 24));
-      } catch {}
+        const responseData = await r.json();
+        
+        // API 응답 구조에 따라 데이터 추출
+        const data: Item[] = responseData.data || responseData || [];
+        setItems(Array.isArray(data) ? data.slice(0, 24) : []);
+      } catch {
+        setItems([]);
+      }
     })();
   }, []);
 

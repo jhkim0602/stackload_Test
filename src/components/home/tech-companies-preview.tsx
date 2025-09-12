@@ -35,8 +35,12 @@ export function TechCompaniesPreview({ className = "" }: TechCompaniesPreviewPro
           fetch('/api/companies')
         ]);
         
-        const techs = await techsResponse.json();
-        const companies = await companiesResponse.json();
+        const techsData = await techsResponse.json();
+        const companiesData = await companiesResponse.json();
+        
+        // API 응답 구조에 따라 데이터 추출
+        const techs = techsData.data || techsData;
+        const companies = companiesData.data || companiesData;
 
         // 각 기술별로 사용하는 기업들을 매칭
         const techsWithCompaniesData = techs.map((tech: any) => {
@@ -45,7 +49,7 @@ export function TechCompaniesPreview({ className = "" }: TechCompaniesPreviewPro
           ).map((company: any) => ({
             name: company.name,
             logoUrl: company.logoUrl,
-            category: company.category
+            category: company.industry || company.category
           }));
 
           return {

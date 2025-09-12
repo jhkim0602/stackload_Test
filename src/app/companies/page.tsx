@@ -4,20 +4,35 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { TECHS } from "@/lib/data";
 import Image from "next/image";
 
 type C = { slug: string; name: string; category: string; region?: string; logoUrl?: string; techSlugs: string[]; sourceName?: string };
+type Tech = { slug: string; name: string; category: string; };
 
 export default function CompaniesPage() {
   const [data, setData] = useState<C[]>([]);
+  const [techs, setTechs] = useState<Tech[]>([]);
+  
   useEffect(() => {
     (async () => {
       try {
-        const r = await fetch("/api/companies", { cache: "no-store" });
-        const res: C[] = r.ok ? await r.json() : [];
-        setData(res);
-      } catch {}
+        const [companiesRes, techsRes] = await Promise.all([
+          fetch("/api/companies", { cache: "no-store" }),
+          fetch("/api/techs", { cache: "no-store" })
+        ]);
+        
+        if (companiesRes.ok) {
+          const companiesData = await companiesRes.json();
+          setData(companiesData.data || companiesData || []);
+        }
+        
+        if (techsRes.ok) {
+          const techsData = await techsRes.json();
+          setTechs(techsData.data || techsData || []);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     })();
   }, []);
 
@@ -49,7 +64,7 @@ export default function CompaniesPage() {
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {c.techSlugs.map((s) => {
-                const t = TECHS.find((x) => x.slug === s);
+                const t = techs.find((x) => x.slug === s);
                 return <Badge key={s} variant="secondary">{t?.name ?? s}</Badge>;
               })}
               {c.sourceName ? <div className="text-[10px] text-muted-foreground basis-full mt-1">source: {c.sourceName}</div> : null}

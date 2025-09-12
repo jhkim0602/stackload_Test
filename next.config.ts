@@ -8,23 +8,28 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.simpleicons.org" },
+      { protocol: "https", hostname: "cdn.jsdelivr.net" },
       { protocol: "https", hostname: "github.com" },
       { protocol: "https", hostname: "raw.githubusercontent.com" },
       { protocol: "https", hostname: "assets.vercel.com" },
-      // 기업 로고 호스트들
-      { protocol: "https", hostname: "ssl.pstatic.net" }, // 네이버
-      { protocol: "https", hostname: "t1.kakaocdn.net" }, // 카카오
-      { protocol: "https", hostname: "obs.line-scdn.net" }, // 라인
-      { protocol: "https", hostname: "static.coupangcdn.com" }, // 쿠팡
-      { protocol: "https", hostname: "static.woowahan.com" }, // 우아한형제들
+      // 기업 로고 호스트들 - 시드 데이터에서 사용
       { protocol: "https", hostname: "static.toss.im" }, // 토스
-      { protocol: "https", hostname: "www.sktelecom.com" }, // SK텔레콤
-      { protocol: "https", hostname: "babytalk.kr" }, // 바비톡
-      { protocol: "https", hostname: "assets.ably.live" }, // 에이블리
-      { protocol: "https", hostname: "www.jobplanet.co.kr" }, // 잡플래닛
-      { protocol: "https", hostname: "ic.zigbang.com" }, // 직방
+      { protocol: "https", hostname: "s.pstatic.net" }, // 네이버
+      { protocol: "https", hostname: "t1.kakaocdn.net" }, // 카카오
+      { protocol: "https", hostname: "www.woowahan.com" }, // 우아한형제들
+      { protocol: "https", hostname: "assets.daangn.com" }, // 당근
+      { protocol: "https", hostname: "scdn.line-apps.com" }, // 라인
+      { protocol: "https", hostname: "image.coupangcdn.com" }, // 쿠팡
+      { protocol: "https", hostname: "image.ohou.se" }, // 오늘의집
+      { protocol: "https", hostname: "www.yanolja.com" }, // 야놀자
+      { protocol: "https", hostname: "www.zigbang.com" }, // 직방
       // 사용자 아바터 이미지
       { protocol: "https", hostname: "images.unsplash.com" }, // Unsplash
+      { protocol: "https", hostname: "lh3.googleusercontent.com" }, // Google profile images
+      { protocol: "https", hostname: "avatars.githubusercontent.com" }, // GitHub avatars
+      // 폴백용 안정적인 이미지 서비스
+      { protocol: "https", hostname: "via.placeholder.com" },
+      { protocol: "https", hostname: "ui-avatars.com" },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",

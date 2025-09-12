@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import data from "@/../public/data/paths.json";
+import { successResponse } from '@/lib/api-response';
 
 type PathItem = {
   slug: string;
@@ -10,9 +10,11 @@ type PathItem = {
 };
 
 export async function GET() {
-  const raw = data as unknown as PathItem[];
-  const withSource: PathItem[] = raw.map((p) => ({ ...p, sourceName: "public/data/paths.json" }));
-  return NextResponse.json(withSource satisfies PathItem[]);
+  // TODO: 향후 데이터베이스에 학습 경로 모델을 추가할 예정
+  // 현재는 빈 배열 반환
+  const paths: PathItem[] = [];
+  
+  return successResponse(paths);
 }
 
 

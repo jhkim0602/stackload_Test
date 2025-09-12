@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+
 // 카테고리 옵션
 const postTypes = [
   {
@@ -78,6 +79,7 @@ interface FormData {
 
 export default function CreatePostPage() {
   const [currentStep, setCurrentStep] = useState<"draft" | "preview" | "success">("draft");
+
   const [formData, setFormData] = useState<FormData>({
     type: "",
     title: "",
@@ -256,10 +258,11 @@ export default function CreatePostPage() {
                 ))}
               </div>
 
-              <div className="prose prose-gray max-w-none">
-                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed mb-6">
-                  {formData.description}
+              <div className="prose prose-gray max-w-none mb-6">
+                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                  {formData.description || '내용이 입력되지 않았습니다.'}
                 </div>
+              </div>
 
                 {(formData.requirements.length > 0 || formData.benefits.length > 0) && (
                   <div className="grid md:grid-cols-2 gap-6">
@@ -400,7 +403,7 @@ export default function CreatePostPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      상세 설명 *
+                      상세 설명 * (마크다운 지원)
                     </label>
                     <textarea
                       className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -413,6 +416,9 @@ export default function CreatePostPage() {
                       value={formData.description}
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
                     />
+                    <p className="text-sm text-gray-500 mt-2">
+                      마크다운 문법을 사용하여 풍부한 텍스트를 작성할 수 있습니다. (예: **굵게**, *기울임*, `코드`, - 목록)
+                    </p>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Star, Bookmark, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/safe-image";
 
 interface PopularTech {
   slug: string;
@@ -34,8 +34,12 @@ export function PopularTechs({ className = "" }: PopularTechsProps) {
           fetch('/api/companies')
         ]);
         
-        const techs = await techsResponse.json();
-        const companies = await companiesResponse.json();
+        const techsData = await techsResponse.json();
+        const companiesData = await companiesResponse.json();
+        
+        // API 응답 구조에 따라 데이터 추출
+        const techs = techsData.data || techsData;
+        const companies = companiesData.data || companiesData;
 
         // 기술별 사용 회사 수 계산
         const techUsage = techs.map((tech: any) => {
@@ -177,19 +181,15 @@ export function PopularTechs({ className = "" }: PopularTechsProps) {
 
             {/* 로고 */}
             <div className="w-10 h-10 flex items-center justify-center">
-              {tech.logoUrl ? (
-                <Image
-                  src={tech.logoUrl}
-                  alt={tech.name}
-                  width={32}
-                  height={32}
-                  className="object-contain"
-                />
-              ) : (
-                <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center text-sm font-bold text-gray-600">
-                  {tech.name.charAt(0)}
-                </div>
-              )}
+              <SafeImage
+                src={tech.logoUrl}
+                alt={tech.name}
+                width={32}
+                height={32}
+                className="object-contain rounded-lg"
+                fallbackText={tech.name.charAt(0)}
+                fallbackColor="bg-gray-200 text-gray-600"
+              />
             </div>
 
             {/* 기술 정보 */}

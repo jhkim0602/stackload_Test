@@ -93,18 +93,23 @@ export function HeroSearch() {
   }, []);
 
   const fuse = useMemo(
-    () =>
-      new Fuse(items, { keys: ["name", "slug", "category"], threshold: 0.3 }),
+    () => {
+      if (!Array.isArray(items) || items.length === 0) return null;
+      return new Fuse(items, { keys: ["name", "slug", "category"], threshold: 0.3 });
+    },
     [items]
   );
   const results = useMemo(
-    () =>
-      query
+    () => {
+      if (!Array.isArray(items)) return [];
+      
+      return query && fuse
         ? fuse
             .search(query)
             .map((r) => r.item)
             .slice(0, 8)
-        : items.slice(0, 8),
+        : items.slice(0, 8);
+    },
     [query, fuse, items]
   );
 

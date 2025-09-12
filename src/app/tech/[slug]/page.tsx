@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getTechBySlug, TECHS } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/tech/favorite-button";
 import { ExternalLink, Github, Star, Building2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SafeImage } from "@/components/ui/safe-image";
+import { prisma } from "@/lib/prisma";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -72,39 +73,145 @@ function getDifficultyLevel(category: string, techName: string) {
 }
 
 export async function generateStaticParams() {
-  return TECHS.map((t) => ({ slug: t.slug }));
+  try {
+    // 개발 환경에서는 빈 배열 반환 (ISR 사용)
+    if (process.env.NODE_ENV === 'development') {
+      return [];
+    }
+    
+    // 프로덕션에서는 데이터베이스에서 직접 가져오기
+    const techs = await prisma.tech.findMany({
+      select: { slug: true }
+    });
+    
+    return techs.map(tech => ({ slug: tech.slug }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const t = getTechBySlug(slug);
-  return {
-    title: t ? `${t.name} | stackload` : "기술 | stackload",
-    description: t?.description,
-  };
+  
+  try {
+    // 데이터베이스에서 기술 정보 직접 가져오기
+    const tech = await prisma.tech.findUnique({
+      where: { slug },
+      select: { name: true, description: true }
+    });
+    
+    return {
+      title: tech ? `${tech.name} | stackload` : "기술 | stackload",
+      description: tech?.description || "기술 스택 정보",
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: "기술 | stackload",
+      description: "기술 스택 정보",
+    };
+  }
 }
 
 export default async function TechDetailPage({ params }: Props) {
   const { slug } = await params;
-  const t = getTechBySlug(slug);
-  if (!t) return notFound();
-
-  // 핵심 지표 계산
-  // 서버사이드에서는 절대 경로 대신 파일에서 직접 읽기
-  const companiesData = await import('@/../public/data/companies.json');
-  const companies = companiesData.default;
-  const usingCompanies = companies.filter((company: any) => 
-    company.techSlugs.includes(t.slug)
-  );
   
-  // 카테고리 내 순위 계산 (사용 기업 수 기준)
-  const sameCategoryTechs = TECHS.filter(tech => tech.category === t.category);
-  const techWithUsage = sameCategoryTechs.map(tech => ({
-    ...tech,
-    usageCount: companies.filter((company: any) => company.techSlugs.includes(tech.slug)).length
-  }));
-  techWithUsage.sort((a, b) => b.usageCount - a.usageCount);
-  const categoryRank = techWithUsage.findIndex(tech => tech.slug === t.slug) + 1;
+  let tech: any = null;
+  let usingCompanies: any[] = [];
+  let categoryRank = 1;
+  
+  try {
+    // 데이터베이스에서 직접 기술 정보 가져오기
+    const [techData, companiesData] = await Promise.all([
+      // 기술 상세 정보
+      prisma.tech.findUnique({
+        where: { slug },
+        include: {
+          postTags: {
+            include: {
+              post: {
+                include: {
+                  author: true
+                }
+              }
+            },
+            take: 5,
+            orderBy: {
+              post: {
+                createdAt: 'desc'
+              }
+            }
+          },
+          _count: {
+            select: { postTags: true }
+          }
+        }
+      }),
+      
+      // 해당 기술을 사용하는 회사들
+      prisma.company.findMany({
+        where: {
+          companyTechs: {
+            some: {
+              tech: {
+                slug: slug
+              }
+            }
+          }
+        },
+        include: {
+          companyTechs: {
+            include: {
+              tech: true
+            }
+          }
+        },
+        take: 20
+      })
+    ]);
+
+    if (!techData) {
+      return notFound();
+    }
+
+    // 데이터 변환
+    tech = {
+      ...techData,
+      id: techData.id.toString(),
+      postCount: techData._count.postTags,
+      recentPosts: techData.postTags.map(pt => ({
+        ...pt.post,
+        id: pt.post.id,
+        likesCount: pt.post.likesCount,
+        commentsCount: pt.post.commentsCount,
+        author: {
+          ...pt.post.author,
+          id: pt.post.author.id
+        }
+      }))
+    };
+
+    // 회사 데이터 변환 (BigInt 처리)
+    usingCompanies = companiesData.map(company => ({
+      ...company,
+      id: company.id.toString(),
+      techSlugs: company.companyTechs.map(ct => ct.tech.slug),
+      techs: company.companyTechs.map(ct => ({
+        ...ct.tech,
+        id: ct.tech.id.toString()
+      }))
+    }));
+
+    // 카테고리 내 순위 계산 (임시로 1로 설정, 향후 개선 필요)
+    categoryRank = 1;
+    
+  } catch (error) {
+    console.error('Error fetching tech data:', error);
+    return notFound();
+  }
+
+  if (!tech) return notFound();
 
   return (
     <div
@@ -118,18 +225,30 @@ export default async function TechDetailPage({ params }: Props) {
         {/* Hero Section */}
         <div className="text-center space-y-6 py-16">
           <div className="flex justify-center items-center gap-4 mb-4">
-            {t.logoUrl ? (
+            {tech.logoUrl ? (
               <div className="w-16 h-16 flex items-center justify-center">
-                <Image src={t.logoUrl} alt={`${t.name} logo`} width={64} height={64} className="object-contain" />
+                <SafeImage 
+                  src={tech.logoUrl} 
+                  alt={`${tech.name} logo`} 
+                  width={64} 
+                  height={64} 
+                  className="object-contain" 
+                  fallbackText={tech.name.charAt(0)}
+                  fallbackColor="bg-gray-200 text-gray-600"
+                />
               </div>
-            ) : null}
+            ) : (
+              <div className="w-16 h-16 flex items-center justify-center bg-gray-200 rounded-lg text-gray-600 text-2xl font-bold">
+                {tech.name.charAt(0)}
+              </div>
+            )}
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-800">
-              {t.name}
+              {tech.name}
             </h1>
           </div>
           
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            {t.description}
+            {tech.description}
           </p>
 
           {/* 핵심 지표 */}
@@ -141,10 +260,10 @@ export default async function TechDetailPage({ params }: Props) {
             
             <div className="flex items-center gap-2 px-4 py-2 bg-white/60 rounded-full border border-white/30">
               <TrendingUp className="w-4 h-4 text-green-600" />
-              <span className="font-semibold text-gray-800">{t.category} 카테고리 {categoryRank}위</span>
+              <span className="font-semibold text-gray-800">{tech.category} 카테고리 {categoryRank}위</span>
             </div>
 
-            {t.repo && (
+            {tech.repo && (
               <div className="flex items-center gap-2 px-4 py-2 bg-white/60 rounded-full border border-white/30">
                 <Star className="w-4 h-4 text-yellow-600" />
                 <span className="font-semibold text-gray-800">GitHub 프로젝트</span>
@@ -154,29 +273,25 @@ export default async function TechDetailPage({ params }: Props) {
 
           <div className="flex justify-center gap-2 flex-wrap mb-6">
             <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 border-purple-200">
-              {t.category}
+              {tech.category}
             </Badge>
-            {t.tags.map((tag) => (
-              <Badge key={tag} variant="outline" className="bg-white/40 hover:bg-white/60">
-                #{tag}
-              </Badge>
-            ))}
+            {/* tags는 현재 API에서 제공되지 않으므로 임시 제거 */}
           </div>
 
           {/* 액션 버튼들 */}
           <div className="flex justify-center gap-4 flex-wrap">
-            {t.homepage && (
+            {tech.homepage && (
               <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                <a href={t.homepage} target="_blank" rel="noreferrer">
+                <a href={tech.homepage} target="_blank" rel="noreferrer">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   공식 사이트
                 </a>
               </Button>
             )}
             
-            {t.repo ? (
+            {tech.repo ? (
               <Button asChild variant="outline">
-                <a href={t.repo} target="_blank" rel="noreferrer">
+                <a href={tech.repo} target="_blank" rel="noreferrer">
                   <Github className="w-4 h-4 mr-2" />
                   GitHub
                 </a>
@@ -195,7 +310,7 @@ export default async function TechDetailPage({ params }: Props) {
           </div>
 
           <div className="flex justify-center mt-6">
-            <FavoriteButton slug={t.slug} />
+            <FavoriteButton slug={tech.slug} />
           </div>
         </div>
 
@@ -212,7 +327,7 @@ export default async function TechDetailPage({ params }: Props) {
               <div>
                 <h4 className="font-semibold text-gray-800 mb-3">어떤 프로젝트에 적합한가요?</h4>
                 <div className="space-y-2">
-                  {getProjectSuitability(t.category, t.name).map((item, index) => (
+                  {getProjectSuitability(tech.category, tech.name).map((item, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <span className="text-green-500 mt-1">✓</span>
                       <span className="text-gray-700">{item}</span>
@@ -228,14 +343,14 @@ export default async function TechDetailPage({ params }: Props) {
                   <div className="flex items-center gap-3">
                     <span className="text-gray-600 min-w-[60px]">난이도:</span>
                     <div className="flex items-center gap-2">
-                      {getDifficultyLevel(t.category, t.name).stars.map((filled, index) => (
+                      {getDifficultyLevel(tech.category, tech.name).stars.map((filled, index) => (
                         <Star key={index} className={`w-4 h-4 ${filled ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
                       ))}
-                      <span className="text-sm font-medium">{getDifficultyLevel(t.category, t.name).label}</span>
+                      <span className="text-sm font-medium">{getDifficultyLevel(tech.category, tech.name).label}</span>
                     </div>
                   </div>
                   <div className="text-sm text-gray-600">
-                    {getDifficultyLevel(t.category, t.name).description}
+                    {getDifficultyLevel(tech.category, tech.name).description}
                   </div>
                 </div>
               </div>

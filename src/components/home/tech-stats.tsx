@@ -22,7 +22,10 @@ export function TechStats({ className = "" }: TechStatsProps) {
     async function loadStats() {
       try {
         const response = await fetch('/api/techs');
-        const techs = await response.json();
+        const techsData = await response.json();
+        
+        // API 응답 구조에 따라 데이터 추출
+        const techs = techsData.data || techsData;
         
         // 카테고리별 통계 계산
         const categoryCount = techs.reduce((acc: Record<string, number>, tech: any) => {

@@ -14,15 +14,31 @@ export function TabsTrending() {
     (async () => {
       try {
         const r = await fetch("/api/techs");
-        const data: Item[] = r.ok ? await r.json() : [];
-        setItems(data);
-      } catch {}
+        const responseData = r.ok ? await r.json() : {};
+        
+        // API 응답 구조에 따라 데이터 추출
+        const data: Item[] = responseData.data || responseData || [];
+        setItems(Array.isArray(data) ? data : []);
+      } catch {
+        setItems([]);
+      }
     })();
   }, []);
 
-  const trending = useMemo(() => items.slice(0, 6), [items]);
-  const top = useMemo(() => items.slice(6, 12), [items]);
-  const newest = useMemo(() => items.slice(12, 18), [items]);
+  const trending = useMemo(() => {
+    if (!Array.isArray(items)) return [];
+    return items.slice(0, 6);
+  }, [items]);
+  
+  const top = useMemo(() => {
+    if (!Array.isArray(items)) return [];
+    return items.slice(6, 12);
+  }, [items]);
+  
+  const newest = useMemo(() => {
+    if (!Array.isArray(items)) return [];
+    return items.slice(12, 18);
+  }, [items]);
 
   const render = (arr: Item[]) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
