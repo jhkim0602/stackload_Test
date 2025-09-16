@@ -1,0 +1,293 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id                   String            @id @default(cuid())
+  name                 String?
+  email                String?           @unique
+  emailVerified        DateTime?         @map("email_verified")
+  image                String?
+  avatarUrl            String?           @map("avatar_url")
+  location             String?
+  level                UserLevel         @default(Beginner)
+  bio                  String?
+  socialLinks          Json              @default("{}") @map("social_links")
+  interests            Json              @default("[]")
+  postsCount           Int               @default(0) @map("posts_count")
+  likesReceivedCount   Int               @default(0) @map("likes_received_count")
+  commentsCount        Int               @default(0) @map("comments_count")
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+  accounts             Account[]
+  commentLikes         CommentLike[]
+  comments             Comment[]
+  likes                Like[]
+  notifications        Notification[]
+  posts                Post[]
+  sessions             Session[]
+  userTechs            UserTech[]
+  techComments         TechComment[]
+  techCommentLikes     TechCommentLike[]
+
+  @@map("users")
+}
+
+model Post {
+  id                Int            @id @default(autoincrement())
+  authorId          String            @map("author_id")
+  type              PostType
+  title             String
+  description       String
+  status            PostStatus        @default(recruiting)
+  likesCount        Int               @default(0) @map("likes_count")
+  commentsCount     Int               @default(0) @map("comments_count")
+  viewsCount        Int               @default(0) @map("views_count")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  comments          Comment[]
+  likes             Like[]
+  notifications     Notification[]
+  tags              PostTag[]
+  author            User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
+}
+
+model Tech {
+  id                Int    @id @default(autoincrement())
+  name              String    @unique
+  slug              String    @unique
+  category          String
+  description       String?
+  logoUrl           String?   @map("logo_url")
+  popularity        Int       @default(0)
+  learningResources Json      @default("[]") @map("learning_resources")
+  aiExplanation     String?   @map("ai_explanation")
+  homepage          String?
+  repo              String?
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  postTags          PostTag[]
+  companyTechs      CompanyTech[]
+  comments          TechComment[]
+  userTechs         UserTech[]
+
+  @@map("techs")
+}
+
+model Company {
+  id           Int        @id @default(autoincrement())
+  name         String        @unique
+  slug         String        @unique
+  description  String?
+  logoUrl      String?       @map("logo_url")
+  website      String?
+  size         String?
+  industry     String?
+  location     String?
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  companyTechs CompanyTech[]
+
+  @@map("companies")
+}
+
+model CompanyTech {
+  id        Int   @id @default(autoincrement())
+  companyId Int   @map("company_id")
+  techId    Int   @map("tech_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tech      Tech     @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, techId])
+  @@map("company_techs")
+}
+
+model Comment {
+  id           Int        @id @default(autoincrement())
+  postId       Int        @map("post_id")
+  authorId     String        @map("author_id")
+  parentId     Int?       @map("parent_id")
+  content      String
+  likesCount   Int           @default(0) @map("likes_count")
+  repliesCount Int           @default(0) @map("replies_count")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  commentLikes CommentLike[]
+  author       User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent       Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      Comment[]     @relation("CommentReplies")
+  post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Like {
+  id        Int   @id @default(autoincrement())
+  userId    String   @map("user_id")
+  postId    Int   @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("likes")
+}
+
+model CommentLike {
+  id        Int   @id @default(autoincrement())
+  userId    String   @map("user_id")
+  commentId Int   @map("comment_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@map("comment_likes")
+}
+
+
+model PostTag {
+  id        Int   @id @default(autoincrement())
+  postId    Int   @map("post_id")
+  techId    Int   @map("tech_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tech      Tech     @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, techId])
+  @@map("post_tags")
+}
+
+model UserTech {
+  id               Int   @id @default(autoincrement())
+  userId           String   @map("user_id")
+  techId           Int      @map("tech_id")
+  proficiencyLevel Int      @default(1) @map("proficiency_level")
+  createdAt        DateTime @default(now()) @map("created_at")
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tech             Tech     @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, techId])
+  @@map("user_techs")
+}
+
+model Notification {
+  id               Int              @id @default(autoincrement())
+  recipientId      String           @map("recipient_id")
+  type             NotificationType
+  title            String
+  message          String
+  relatedPostId    Int?             @map("related_post_id")
+  relatedCommentId Int?             @map("related_comment_id")
+  relatedUserId    String?          @map("related_user_id")
+  isRead           Boolean          @default(false) @map("is_read")
+  readAt           DateTime?        @map("read_at")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  recipient        User             @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  relatedPost      Post?            @relation(fields: [relatedPostId], references: [id])
+
+  @@map("notifications")
+}
+
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+
+enum UserLevel {
+  Beginner
+  Junior
+  MidLevel @map("Mid-Level")
+  Senior
+  Expert
+  Student
+}
+
+enum PostType {
+  project
+  study
+  mentoring
+}
+
+enum PostStatus {
+  recruiting
+  inProgress @map("in_progress")
+  completed
+  closed
+}
+
+
+model TechComment {
+  id        Int      @id @default(autoincrement())
+  techId    Int      @map("tech_id")
+  authorId  String   @map("author_id")
+  parentId  Int?     @map("parent_id")
+  content   String
+  likesCount Int     @default(0) @map("likes_count")
+  repliesCount Int   @default(0) @map("replies_count")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  tech      Tech         @relation(fields: [techId], references: [id], onDelete: Cascade)
+  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    TechComment? @relation("TechCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   TechComment[] @relation("TechCommentReplies")
+  likes     TechCommentLike[]
+
+  @@map("tech_comments")
+}
+
+model TechCommentLike {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id")
+  commentId Int      @map("comment_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   TechComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@map("tech_comment_likes")
+}
+
+enum NotificationType {
+  POST_LIKE
+  COMMENT
+  COMMENT_REPLY
+  COMMENT_LIKE
+}

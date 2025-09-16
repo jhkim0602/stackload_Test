@@ -1,0 +1,122 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  # Preview 배포 (PR 또는 feature 브랜치)
+  deploy-preview:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    environment: preview
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Environment check
+        run: npm run env:check
+        env:
+          NODE_ENV: production
+          ENVIRONMENT: preview
+          DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
+          NEXTAUTH_URL: ${{ secrets.PREVIEW_NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.PREVIEW_NEXTAUTH_SECRET }}
+          
+      - name: Type check
+        run: npm run type-check
+        
+      - name: Lint check
+        run: npm run lint
+        
+      - name: Build application
+        run: npm run build:preview
+        env:
+          NODE_ENV: production
+          ENVIRONMENT: preview
+          DATABASE_URL: ${{ secrets.PREVIEW_DATABASE_URL }}
+          
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+        
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        
+      - name: Deploy to Vercel (Preview)
+        run: vercel deploy --token=${{ secrets.VERCEL_TOKEN }}
+        
+  # Production 배포 (main 브랜치)  
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Environment check
+        run: npm run env:check
+        env:
+          NODE_ENV: production
+          ENVIRONMENT: production
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          NEXTAUTH_URL: ${{ secrets.PRODUCTION_NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.PRODUCTION_NEXTAUTH_SECRET }}
+          
+      - name: Type check
+        run: npm run type-check
+        
+      - name: Lint check
+        run: npm run lint
+        
+      - name: Database migration
+        run: npm run db:migrate:production
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          
+      - name: Build application
+        run: npm run build:production
+        env:
+          NODE_ENV: production
+          ENVIRONMENT: production
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+        
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        
+      - name: Deploy to Vercel (Production)
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+        
+      - name: Post-deployment health check
+        run: |
+          sleep 30
+          curl -f ${{ secrets.PRODUCTION_NEXTAUTH_URL }}/api/health || exit 1
