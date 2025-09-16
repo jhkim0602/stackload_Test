@@ -84,9 +84,6 @@ class DatabaseHealthChecker {
           case 'CompanyTech':
             count = await prisma.companyTech.count()
             break
-          case 'PostApplication':
-            count = await prisma.postApplication.count()
-            break
         }
 
         const responseTime = Date.now() - startTime

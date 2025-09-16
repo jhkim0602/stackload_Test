@@ -15,7 +15,8 @@
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"삭제하면서 tech에서 컬러 필드도 삭제해줘 사용하지 않아\" npx prisma db push --force-reset)",
       "Bash(sed:*)",
       "Bash(mv:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

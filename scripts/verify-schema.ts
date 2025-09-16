@@ -26,8 +26,6 @@ async function main() {
     const likeCount = await prisma.like.count()
     console.log(`✅ likes: ${likeCount}개 레코드`)
     
-    const applicationCount = await prisma.postApplication.count()
-    console.log(`✅ post_applications: ${applicationCount}개 레코드`)
     
     const userTechCount = await prisma.userTech.count()
     console.log(`✅ user_techs: ${userTechCount}개 레코드`)
