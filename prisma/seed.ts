@@ -1,5 +1,5 @@
 // prisma/seed.ts
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -373,7 +373,11 @@ Node.js를 활용한 백엔드 개발을 배우고 싶은 분들을 위한 멘�
   const postgresqlTech = await prisma.tech.findUnique({ where: { slug: 'postgresql' } })
   
   // UserTech 데이터 생성
-  const userTechData: Prisma.UserTechCreateManyInput[] = []
+  const userTechData: Array<{
+    userId: string;
+    techId: number;
+    proficiencyLevel: number;
+  }> = []
   
   if (reactTech) {
     userTechData.push(
