@@ -3,6 +3,70 @@ import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { successResponse, errorResponse, createPagination } from '@/lib/api-response'
 
+/**
+ * @swagger
+ * /api/posts:
+ *   get:
+ *     summary: Get a list of posts
+ *     description: Retrieves a paginated list of posts, with options for filtering and sorting.
+ *     tags: [Posts]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of posts to retrieve per page.
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [project, study, mentoring]
+ *         description: Filter posts by type.
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [recruiting, inProgress, completed, closed]
+ *         description: Filter posts by status.
+ *       - in: query
+ *         name: tags
+ *         schema:
+ *           type: string
+ *         description: Comma-separated list of tech slugs to filter by (e.g., "react,nodejs").
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [latest, popular]
+ *           default: latest
+ *         description: The sorting order for the posts.
+ *     responses:
+ *       200:
+ *         description: A successful response, returning a list of posts and pagination details.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Post'
+ *                 pagination:
+ *                   $ref: '#/components/schemas/Pagination'
+ *       500:
+ *         description: Internal server error.
+ */
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)

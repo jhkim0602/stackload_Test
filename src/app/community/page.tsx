@@ -61,20 +61,13 @@ const getCategoriesWithCounts = (posts: Post[], likedPosts: Set<string>) => [
   { id: "liked", name: "좋아요한 글", icon: Heart, count: posts.filter(p => likedPosts.has(p.id)).length }
 ];
 
-const trendingTags = [
-  { name: "react", count: 28 },
-  { name: "nextjs", count: 15 },
-  { name: "typescript", count: 24 },
-  { name: "nodejs", count: 19 },
-  { name: "python", count: 12 },
-  { name: "ai", count: 8 }
-];
 
 export default function CommunityPage() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +75,7 @@ export default function CommunityPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("latest");
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const [availableTags, setAvailableTags] = useState<{id: string, name: string, slug: string, category: string}[]>([]);
 
   useEffect(() => {
     setCurrentPage(1); // 카테고리 변경 시 첫 페이지로 리셋
@@ -97,8 +91,29 @@ export default function CommunityPage() {
   }, [searchQuery]);
 
   useEffect(() => {
+    setCurrentPage(1); // 태그 변경 시 첫 페이지로 리셋
+    fetchPosts();
+  }, [selectedTags]);
+
+  useEffect(() => {
     fetchPosts();
   }, [currentPage, sortBy]);
+
+  // 사용 가능한 태그 목록 가져오기
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch('/api/techs?limit=100&sortBy=popularity');
+        if (response.ok) {
+          const result = await response.json();
+          setAvailableTags(result.data || []);
+        }
+      } catch (error) {
+        console.error('태그 목록 가져오기 실패:', error);
+      }
+    };
+    fetchTags();
+  }, []);
 
   const fetchPosts = async () => {
     try {
@@ -113,6 +128,7 @@ export default function CommunityPage() {
       const params = new URLSearchParams();
       if (activeCategory !== "all") params.append("type", activeCategory);
       if (searchQuery) params.append("search", searchQuery);
+      if (selectedTags.length > 0) params.append("tags", selectedTags.join(','));
       params.append("page", currentPage.toString());
       params.append("limit", "10");
       params.append("sortBy", sortBy);
@@ -240,9 +256,24 @@ export default function CommunityPage() {
     }
   };
 
-  // 태그 클릭으로 검색
-  const handleTagClick = (tagName: string) => {
-    setSearchQuery(tagName);
+  // 태그 클릭 핀링
+  const handleTagClick = (tagSlug: string) => {
+    if (selectedTags.includes(tagSlug)) {
+      setSelectedTags(selectedTags.filter(tag => tag !== tagSlug));
+    } else {
+      setSelectedTags([...selectedTags, tagSlug]);
+    }
+  };
+
+  // 태그 제거
+  const handleTagRemove = (tagSlug: string) => {
+    setSelectedTags(selectedTags.filter(tag => tag !== tagSlug));
+  };
+
+  // 선택된 태그의 이름 찾기
+  const getTagName = (slug: string) => {
+    const tag = availableTags.find(t => t.slug === slug);
+    return tag ? tag.name : slug;
   };
 
   // 작성자 프로필 보기
@@ -312,6 +343,35 @@ export default function CommunityPage() {
             />
           </div>
 
+          {/* 선택된 태그 표시 - Velog 스타일 */}
+          {selectedTags.length > 0 && (
+            <div className="mb-6 bg-white/90 backdrop-blur-sm rounded-xl border border-gray-200 p-4 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <Tag className="w-4 h-4 text-emerald-600" />
+                <span className="text-sm font-semibold text-gray-800">활성 태그</span>
+                <span className="text-xs text-gray-500">({selectedTags.length}개)</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {selectedTags.map((tagSlug) => (
+                  <div
+                    key={tagSlug}
+                    className="flex items-center bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-sm border border-emerald-200 hover:bg-emerald-100 transition-colors"
+                  >
+                    <span className="mr-2 font-medium">#{getTagName(tagSlug)}</span>
+                    <button
+                      onClick={() => handleTagRemove(tagSlug)}
+                      className="hover:bg-emerald-200 rounded-full p-0.5 transition-colors"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Sort Options */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
@@ -374,23 +434,87 @@ export default function CommunityPage() {
               </div>
             </div>
 
-            {/* Trending Tags */}
+            {/* 태그 필터링 */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg p-6">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4" />
-                인기 태그
+                <Tag className="w-4 h-4" />
+                태그 필터
               </h3>
-              <div className="flex flex-wrap gap-2">
-                {trendingTags.map((tag) => (
-                  <button
-                    key={tag.name}
-                    onClick={() => handleTagClick(tag.name)}
-                    className="px-3 py-2 text-sm bg-gradient-to-r from-gray-100 to-gray-200 hover:from-blue-100 hover:to-purple-100 text-gray-700 hover:text-gray-900 rounded-lg border transition-all duration-200 hover:shadow-md"
-                  >
-                    #{tag.name}
-                    <span className="ml-1 text-xs text-gray-500">{tag.count}</span>
-                  </button>
-                ))}
+              
+              {/* 선택된 태그 표시 */}
+              {selectedTags.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm font-medium text-gray-700">선택된 태그:</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTags.map((tagSlug) => (
+                      <div
+                        key={tagSlug}
+                        className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                      >
+                        <span className="mr-1">#{getTagName(tagSlug)}</span>
+                        <button
+                          onClick={() => handleTagRemove(tagSlug)}
+                          className="hover:bg-blue-200 rounded-full p-0.5"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 카테고리별로 그룹화된 태그 표시 */}
+              <div className="max-h-96 overflow-y-auto">
+                {(() => {
+                  // 카테고리별로 태그 그룹화
+                  const groupedTags = availableTags.reduce((groups, tag) => {
+                    const category = tag.category || 'Other';
+                    if (!groups[category]) {
+                      groups[category] = [];
+                    }
+                    groups[category].push(tag);
+                    return groups;
+                  }, {} as Record<string, typeof availableTags>);
+
+                  // 카테고리 정렬 (일반적인 순서)
+                  const categoryOrder = ['Frontend', 'Backend', 'Database', 'DevOps', 'Mobile', 'Language', 'Framework', 'Tool', 'Other'];
+                  const sortedCategories = Object.keys(groupedTags).sort((a, b) => {
+                    const aIndex = categoryOrder.indexOf(a);
+                    const bIndex = categoryOrder.indexOf(b);
+                    if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+                    if (aIndex === -1) return 1;
+                    if (bIndex === -1) return -1;
+                    return aIndex - bIndex;
+                  });
+
+                  return sortedCategories.map((category) => (
+                    <div key={category} className="mb-6 last:mb-0">
+                      <h4 className="text-sm font-semibold text-gray-800 mb-3 px-2 border-l-4 border-blue-500">
+                        {category}
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {groupedTags[category].slice(0, 10).map((tag) => (
+                          <button
+                            key={tag.id}
+                            onClick={() => handleTagClick(tag.slug)}
+                            className={`px-3 py-2 text-sm rounded-lg border transition-all duration-200 hover:shadow-md ${
+                              selectedTags.includes(tag.slug)
+                                ? 'bg-blue-100 text-blue-700 border-blue-300'
+                                : 'bg-gradient-to-r from-gray-100 to-gray-200 hover:from-blue-100 hover:to-purple-100 text-gray-700 hover:text-gray-900'
+                            }`}
+                          >
+                            #{tag.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ));
+                })()}
               </div>
             </div>
           </div>
@@ -398,10 +522,19 @@ export default function CommunityPage() {
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
             {(() => {
-              // 카테고리에 따른 포스트 필터링
-              const filteredPosts = activeCategory === "liked" 
-                ? posts.filter(post => likedPosts.has(post.id))
-                : posts;
+              // 카테고리와 태그에 따른 포스트 필터링
+              let filteredPosts = posts;
+              
+              if (activeCategory === "liked") {
+                filteredPosts = posts.filter(post => likedPosts.has(post.id));
+              }
+              
+              // 선택된 태그로 추가 필터링
+              if (selectedTags.length > 0) {
+                filteredPosts = filteredPosts.filter(post => 
+                  post.tags.some(tag => selectedTags.includes(tag.slug))
+                );
+              }
               
               return filteredPosts.length === 0 ? (
                 <div className="text-center py-12">
@@ -410,6 +543,14 @@ export default function CommunityPage() {
                       <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                       <p className="text-gray-500 mb-4">아직 좋아요한 글이 없습니다.</p>
                       <p className="text-sm text-gray-400">마음에 드는 글에 좋아요를 눌러보세요!</p>
+                    </div>
+                  ) : selectedTags.length > 0 ? (
+                    <div>
+                      <Tag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500 mb-4">선택한 태그에 해당하는 글이 없습니다.</p>
+                      <p className="text-sm text-gray-400">
+                        다른 태그를 선택하거나 새로운 글을 작성해보세요!
+                      </p>
                     </div>
                   ) : (
                     <div>
@@ -491,8 +632,12 @@ export default function CommunityPage() {
                       {post.tags.map((tag) => (
                         <button
                           key={tag.id}
-                          onClick={() => handleTagClick(tag.name)}
-                          className="px-2 py-1 text-xs bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-700 rounded-md transition-colors cursor-pointer"
+                          onClick={() => handleTagClick(tag.slug)}
+                          className={`px-2 py-1 text-xs rounded-md transition-colors cursor-pointer ${
+                            selectedTags.includes(tag.slug)
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-gray-100 hover:bg-blue-100 text-gray-600 hover:text-blue-700'
+                          }`}
                         >
                           #{tag.name.toLowerCase()}
                         </button>
@@ -570,7 +715,7 @@ export default function CommunityPage() {
             })()}
 
             {/* Pagination */}
-            {totalPages > 1 && activeCategory !== "liked" && (
+            {totalPages > 1 && activeCategory !== "liked" && selectedTags.length === 0 && (
               <div className="flex items-center justify-center gap-2 pt-8">
                 <Button
                   variant="outline"

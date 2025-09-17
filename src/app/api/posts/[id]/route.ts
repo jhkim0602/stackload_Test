@@ -41,6 +41,10 @@ export async function GET(
             level: true,
             bio: true,
             location: true,
+            socialLinks: true,
+            postsCount: true,
+            likesReceivedCount: true,
+            commentsCount: true,
           },
         },
         tags: {
