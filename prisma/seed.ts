@@ -47,7 +47,18 @@ async function main() {
             url: 'https://reactjs.org/tutorial/tutorial.html',
             type: 'tutorial'
           }
-        ]
+        ],
+        projectSuitability: [
+          "대화형 사용자 인터페이스가 중요한 웹 애플리케이션",
+          "SPA(Single Page Application) 개발",
+          "실시간 데이터 업데이트가 필요한 대시보드",
+          "컴포넌트 기반 재사용 가능한 UI 구축"
+        ],
+        learningDifficulty: {
+          stars: [true, true, true, false, false],
+          label: "중급",
+          description: "JavaScript와 컴포넌트 개념 이해가 선행되어야 하며, 상태 관리와 생명주기를 이해하는 것이 중요합니다."
+        }
       },
       {
         name: 'Next.js',
@@ -58,7 +69,18 @@ async function main() {
         popularity: 90,
         aiExplanation: 'Next.js는 Vercel에서 개발한 React 기반 풀스택 웹 프레임워크입니다. 서버 사이드 렌더링(SSR), 정적 사이트 생성(SSG), API 라우트 등을 지원하며, 성능 최적화와 SEO에 강점이 있습니다. 파일 기반 라우팅 시스템과 자동 코드 분할 기능으로 개발 생산성을 크게 향상시킵니다.',
         homepage: 'https://nextjs.org',
-        repo: 'https://github.com/vercel/next.js'
+        repo: 'https://github.com/vercel/next.js',
+        projectSuitability: [
+          "SEO가 중요한 비즈니스 웹사이트",
+          "전자상거래 및 컨텐츠 사이트",
+          "마케팅 랜딩 페이지",
+          "블로그 및 미디어 플랫폼"
+        ],
+        learningDifficulty: {
+          stars: [true, true, true, true, false],
+          label: "고급",
+          description: "React 경험이 필수이며, SSR/SSG 개념과 라우팅 시스템 이해가 중요합니다."
+        }
       },
       {
         name: 'TypeScript',
@@ -69,7 +91,18 @@ async function main() {
         popularity: 88,
         aiExplanation: 'TypeScript는 Microsoft에서 개발한 JavaScript의 상위 집합 언어입니다. 정적 타입 검사를 통해 런타임 오류를 컴파일 타임에 잡아낼 수 있으며, 대규모 애플리케이션 개발 시 코드의 안정성과 유지보수성을 크게 향상시킵니다. 최신 ES 기능을 지원하며 다양한 IDE에서 뛰어난 개발자 도구를 제공합니다.',
         homepage: 'https://www.typescriptlang.org',
-        repo: 'https://github.com/microsoft/TypeScript'
+        repo: 'https://github.com/microsoft/TypeScript',
+        projectSuitability: [
+          "대규모 팀에서 개발하는 복잡한 애플리케이션",
+          "타입 안정성이 중요한 엔터프라이즈 프로젝트",
+          "장기적 유지보수가 필요한 시스템",
+          "API와 데이터 모델이 복잡한 프로젝트"
+        ],
+        learningDifficulty: {
+          stars: [true, true, true, false, false],
+          label: "중급",
+          description: "JavaScript 경험이 필요하며, 타입 시스템과 제네릭 개념 이해가 중요합니다."
+        }
       },
       {
         name: 'Vue.js',
@@ -80,7 +113,18 @@ async function main() {
         popularity: 85,
         aiExplanation: 'Vue.js는 Evan You가 개발한 프로그레시브 JavaScript 프레임워크입니다. 학습 곡선이 완만하고 기존 프로젝트에 점진적으로 도입할 수 있어 접근성이 뛰어납니다. 템플릿 기반 문법과 양방향 데이터 바인딩을 제공하며, 컴포지션 API를 통해 로직을 재사용 가능한 형태로 구성할 수 있습니다.',
         homepage: 'https://vuejs.org',
-        repo: 'https://github.com/vuejs/vue'
+        repo: 'https://github.com/vuejs/vue',
+        projectSuitability: [
+          "기존 프로젝트에 점진적 도입",
+          "중소규모 웹 애플리케이션",
+          "프롯타이핑 및 빠른 개발",
+          "학습용 프레임워크 프로젝트"
+        ],
+        learningDifficulty: {
+          stars: [true, true, false, false, false],
+          label: "초중급",
+          description: "직관적인 문법으로 프레임워크 입문자에게 적합합니다."
+        }
       },
       {
         name: 'Node.js',
@@ -91,7 +135,18 @@ async function main() {
         popularity: 92,
         aiExplanation: 'Node.js는 Chrome V8 JavaScript 엔진을 기반으로 한 서버 사이드 JavaScript 런타임 환경입니다. 이벤트 기반의 비동기 I/O 모델을 사용하여 높은 성능과 확장성을 제공합니다. NPM 생태계를 통해 수많은 오픈소스 패키지를 활용할 수 있으며, 프론트엔드와 백엔드에서 동일한 언어를 사용할 수 있는 장점이 있습니다.',
         homepage: 'https://nodejs.org',
-        repo: 'https://github.com/nodejs/node'
+        repo: 'https://github.com/nodejs/node',
+        projectSuitability: [
+          "확장 가능한 REST API 서버 구축",
+          "실시간 채팅 및 알림 시스템",
+          "마이크로서비스 아키텍처",
+          "I/O 집약적인 네트워크 애플리케이션"
+        ],
+        learningDifficulty: {
+          stars: [true, true, true, false, false],
+          label: "중급",
+          description: "JavaScript 기초와 비동기 프로그래밍, 서버 개발 개념 이해가 필요합니다."
+        }
       },
       {
         name: 'Python',
@@ -102,7 +157,18 @@ async function main() {
         popularity: 94,
         aiExplanation: 'Python은 Guido van Rossum이 개발한 고급 프로그래밍 언어입니다. 간결하고 읽기 쉬운 문법으로 생산성이 높으며, 웹 개발, 데이터 분석, 인공지능, 자동화 등 다양한 분야에서 활용됩니다. 풍부한 라이브러리 생태계와 활발한 커뮤니티를 가지고 있어 학습과 개발에 유리합니다.',
         homepage: 'https://www.python.org',
-        repo: 'https://github.com/python/cpython'
+        repo: 'https://github.com/python/cpython',
+        projectSuitability: [
+          "데이터 분석 및 데이터 사이언스 프로젝트",
+          "딥러닝 및 AI 모델 개발",
+          "웹 개발 및 API 서버 구축",
+          "자동화 스크립트 및 데이터 파이프라인"
+        ],
+        learningDifficulty: {
+          stars: [true, true, false, false, false],
+          label: "초중급",
+          description: "읽기 쉬운 문법으로 프로그래밍 입문자에게 좋습니다."
+        }
       },
       {
         name: 'Java',
@@ -168,7 +234,18 @@ async function main() {
         popularity: 87,
         aiExplanation: 'Docker는 애플리케이션을 컨테이너화하여 어디서나 동일하게 실행할 수 있게 해주는 플랫폼입니다. 가상화보다 가볍고 빠르며, 개발, 테스트, 배포 환경을 일관성 있게 관리할 수 있습니다. 마이크로서비스 아키텍처와 CI/CD 파이프라인에서 핵심적인 역할을 하며, 클라우드 네이티브 개발의 필수 도구입니다.',
         homepage: 'https://www.docker.com',
-        repo: 'https://github.com/docker/docker-ce'
+        repo: 'https://github.com/docker/docker-ce',
+        projectSuitability: [
+          "컨테이너 기반 배포 환경",
+          "CI/CD 파이프라인 구축",
+          "마이크로서비스 아키텍처",
+          "개발 환경 표준화 프로젝트"
+        ],
+        learningDifficulty: {
+          stars: [true, true, true, false, false],
+          label: "중급",
+          description: "컨테이너 개념과 리눅스 기초 지식이 도움됩니다."
+        }
       }
     ],
     skipDuplicates: true

@@ -290,10 +290,6 @@ export default async function TechDetailPage({ params }: Props) {
               </Button>
             )}
 
-            <Button variant="secondary">
-              <TrendingUp className="w-4 h-4 mr-2" />
-              유사 기술 비교
-            </Button>
           </div>
 
           <div className="flex justify-center mt-6">
@@ -314,7 +310,7 @@ export default async function TechDetailPage({ params }: Props) {
               <div>
                 <h4 className="font-semibold text-gray-800 mb-3">어떤 프로젝트에 적합한가요?</h4>
                 <div className="space-y-2">
-                  {getProjectSuitability(tech.category, tech.name).map((item, index) => (
+                  {(tech.projectSuitability && Array.isArray(tech.projectSuitability) && tech.projectSuitability.length > 0 ? tech.projectSuitability : getProjectSuitability(tech.category, tech.name)).map((item: string, index: number) => (
                     <div key={index} className="flex items-start gap-2">
                       <span className="text-green-500 mt-1">✓</span>
                       <span className="text-gray-700">{item}</span>
@@ -330,14 +326,14 @@ export default async function TechDetailPage({ params }: Props) {
                   <div className="flex items-center gap-3">
                     <span className="text-gray-600 min-w-[60px]">난이도:</span>
                     <div className="flex items-center gap-2">
-                      {getDifficultyLevel(tech.category, tech.name).stars.map((filled, index) => (
+                      {(tech.learningDifficulty?.stars || getDifficultyLevel(tech.category, tech.name).stars).map((filled: boolean, index: number) => (
                         <Star key={index} className={`w-4 h-4 ${filled ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
                       ))}
-                      <span className="text-sm font-medium">{getDifficultyLevel(tech.category, tech.name).label}</span>
+                      <span className="text-sm font-medium">{tech.learningDifficulty?.label || getDifficultyLevel(tech.category, tech.name).label}</span>
                     </div>
                   </div>
                   <div className="text-sm text-gray-600">
-                    {getDifficultyLevel(tech.category, tech.name).description}
+                    {tech.learningDifficulty?.description || getDifficultyLevel(tech.category, tech.name).description}
                   </div>
                 </div>
               </div>

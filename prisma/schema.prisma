@@ -61,23 +61,25 @@ model Post {
 }
 
 model Tech {
-  id                Int           @id @default(autoincrement())
-  name              String        @unique
-  slug              String        @unique
-  category          String
-  description       String?
-  logoUrl           String?       @map("logo_url")
-  popularity        Int           @default(0)
-  learningResources Json          @default("[]") @map("learning_resources")
-  aiExplanation     String?       @map("ai_explanation")
-  homepage          String?
-  repo              String?
-  createdAt         DateTime      @default(now()) @map("created_at")
-  updatedAt         DateTime      @updatedAt @map("updated_at")
-  companyTechs      CompanyTech[]
-  postTags          PostTag[]
-  comments          TechComment[]
-  userTechs         UserTech[]
+  id                  Int           @id @default(autoincrement())
+  name                String        @unique
+  slug                String        @unique
+  category            String
+  description         String?
+  logoUrl             String?       @map("logo_url")
+  popularity          Int           @default(0)
+  learningResources   Json          @default("[]") @map("learning_resources")
+  aiExplanation       String?       @map("ai_explanation")
+  homepage            String?
+  repo                String?
+  projectSuitability  Json          @default("[]") @map("project_suitability")
+  learningDifficulty  Json?         @map("learning_difficulty")
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+  companyTechs        CompanyTech[]
+  postTags            PostTag[]
+  comments            TechComment[]
+  userTechs           UserTech[]
 
   @@map("techs")
 }
